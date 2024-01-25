@@ -1,0 +1,7 @@
+{
+  "name": "ccs-6-project",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "vue-vite"
+}

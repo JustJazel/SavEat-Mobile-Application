@@ -1,0 +1,136 @@
+/*this is the sheet for style in savEat application*/
+
+/*These are styles for logo*/
+.logo {
+  border-radius: 50%;
+  width: 225px;
+  height: 225px;
+}
+.logoAlign {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*Style for page*/
+.topBar {
+  --background: var(--ion-color-top-bar) !important;
+}
+
+body {
+  background-color: var(--ion-color-body) !important;
+  font-family: var(--font-family);
+  font-size: var(--custom-font-size); /* Use the custom font size */
+  color: var(--main-color);
+}
+
+ion-input {
+  --border-radius: 0;
+}
+
+/*food list */
+.FoodList {
+  margin: 5px;
+  background-color: aquamarine;
+  border-radius: 30px;
+  padding: 10px;
+}
+
+ion-button {
+  --color: rgb(0, 0, 2); /* Changes the text color */
+  --background: rgb(143, 190, 166); /* Changes the button color */
+}
+
+ion-icon {
+  --color: dark;
+}
+
+/* This is for the topbar-container */
+/* CSS */
+.topbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+}
+
+.namesec-container {
+  flex: 1;
+  text-align: left;
+}
+
+.icon-container {
+  flex: 1;
+  text-align: center;
+}
+
+.logout-container {
+  flex: 1;
+  text-align: right;
+}
+
+.logout-container ion-button {
+  --background: transparent;
+  --color: black !important;
+}
+
+/* End of the topbar-container */
+
+/* This is for the filter-container */
+.filter-container {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-container {
+  box-sizing: border-box;
+  width: 40%;
+}
+
+.checkbox-container {
+  width: 50%;
+  display: flex;
+  justify-content: space-between;
+  column-gap: 5%;
+  box-sizing: border-box;
+}
+
+@media only screen and (max-width: 600px) {
+  .filter-container {
+    flex-direction: column;
+  }
+}
+
+/* Styles for screens between 600px and 900px (e.g., tablets) */
+@media only screen and (min-width: 601px) and (max-width: 900px) {
+  .filter-container {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+}
+
+/* Styles for screens larger than 900px (e.g., laptops, desktops) */
+@media only screen and (min-width: 901px) {
+  .filter-container {
+    flex-direction: row;
+  }
+}
+/* End of the filter-container */
+
+.list-entry {
+  border: 1px solid #ccc;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+.list-entry h2 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.list-entry p {
+  margin: 0;
+  font-size: 14px;
+  color: #555;
+}
