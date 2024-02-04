@@ -29,6 +29,10 @@ import '@ionic/vue/css/structure.css';
 import '@ionic/vue/css/typography.css';
 import '@ionic/vue/css/display.css';
 
+/* Mobile to Web */
+import { defineCustomElements } from '@ionic/pwa-elements/loader';
+import './registerServiceWorker';
+
 const pinia = createPinia();
 
 const app = createApp(App).use(IonicVue).use(router).use(pinia);
@@ -36,3 +40,5 @@ const app = createApp(App).use(IonicVue).use(router).use(pinia);
 router.isReady().then(() => {
   app.mount('#app');
 });
+
+defineCustomElements(window); //idk what is this

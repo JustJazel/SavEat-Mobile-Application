@@ -3,9 +3,10 @@ import vue from '@vitejs/plugin-vue';
 import path from 'path';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import { VitePWA } from 'vite-plugin-pwa'; //added for pwa
 
 export default defineConfig({
-  plugins: [tsconfigPaths(), vue(), legacy()],
+  plugins: [tsconfigPaths(), vue(), VitePWA({ registerType: 'autoUpdate' }), legacy()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
