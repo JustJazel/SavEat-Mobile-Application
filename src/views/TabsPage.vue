@@ -20,6 +20,12 @@
             <ion-button color="warning" @click="goToEditProfile">Edit</ion-button>
           </ion-item>
 
+          <!--Delete Account-->
+          <ion-item>
+            <ion-label>Delete Account</ion-label>
+            <ion-button color="danger" @click="deleteAccount">Delete</ion-button>
+          </ion-item>
+
           <!--Logout To Saveat-->
           <ion-item>
             <ion-label>Logout</ion-label>
@@ -80,6 +86,7 @@
   import { useIonRouter } from '@ionic/vue';
   import { useUserStore } from '../store';
   import { useRouter } from 'vue-router';
+  
 
   const pageTitle = ref('Menu');
   const ionRouter = useIonRouter();
@@ -115,6 +122,35 @@
 
     await menuController.close();
   }
+
+  async function deleteAccount() {
+    const currentUser = supabase.auth.getUser();
+
+    if (!currentUser) {
+      console.error('User not authenticated.');
+      return;
+    }
+
+    try {
+      // Delete the user account
+      const { error } = await supabase
+        .from('auth/v1/users')
+        .delete()
+        .eq('id', currentUser.id);
+
+      if (error) {
+        console.error('Error deleting user account:', error.message);
+        // Handle the error or provide user feedback
+      } else {
+        console.log('User account deleted successfully.');
+        // Redirect or perform any necessary actions after account deletion
+      }
+    } catch (error) {
+      console.error('An unexpected error occurred:', error);
+      // Handle unexpected errors
+    }
+  }
+
 
   const handleTabChange = (event: { tab: string }) => {
     const tabs = Object.values(TAB_ROUTES).map((tab) => tab.name);
