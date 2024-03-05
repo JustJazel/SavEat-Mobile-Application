@@ -126,32 +126,23 @@
   async function deleteAccount() {
   try {
     // Get the current user ID
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();\
+
+    // this is an error because user might have a null value?? But, like how do null when logged in, yes????
     const currentUserId = user.id;
 
-    // Delete the user from the authentication system using the REST API
-    const response = await fetch(
-      `https://xcspnnmswynkoibswxyw.supabase.co/rest/v1/auth.users?id=eq.${currentUserId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhjc3Bubm1zd3lua29pYnN3eHl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA1ODQxNjQsImV4cCI6MjAxNjE2MDE2NH0.ho4mMmPxIheFu4QoE5f_hg4E69af-cCQL41QsAAb1R4', 
-        },
-      }
-    );
+    // Delete the user 
+    const { data, error } = await supabase.auth.admin.deleteUser(currentUserId);
 
-    if (!response.ok) {
-      const errorMessage = await response.text();
-      console.error('Error deleting user account:', errorMessage);
-      
+    if (error) {
+      console.error('Error deleting user account:', error.message);
     } else {
-      console.log('User account deleted successfully.');
-    
+      console.log('User account deleted successfully:', data);
     }
 
     // Log the user out
     await logout();
+    
   } catch (error) {
     console.error('Error during deleteAccount:', error.message);
     // Handle the error as needed
