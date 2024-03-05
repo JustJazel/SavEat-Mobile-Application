@@ -124,32 +124,39 @@
   }
 
   async function deleteAccount() {
-    const currentUser = supabase.auth.getUser();
+  try {
+    // Get the current user ID
+    const { data: { user } } = await supabase.auth.getUser();
+    const currentUserId = user.id;
 
-    if (!currentUser) {
-      console.error('User not authenticated.');
-      return;
-    }
-
-    try {
-      // Delete the user account
-      const { error } = await supabase
-        .from('auth/v1/users')
-        .delete()
-        .eq('id', currentUser.id);
-
-      if (error) {
-        console.error('Error deleting user account:', error.message);
-        // Handle the error or provide user feedback
-      } else {
-        console.log('User account deleted successfully.');
-        // Redirect or perform any necessary actions after account deletion
+    // Delete the user from the authentication system using the REST API
+    const response = await fetch(
+      `https://xcspnnmswynkoibswxyw.supabase.co/rest/v1/auth.users?id=eq.${currentUserId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhjc3Bubm1zd3lua29pYnN3eHl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA1ODQxNjQsImV4cCI6MjAxNjE2MDE2NH0.ho4mMmPxIheFu4QoE5f_hg4E69af-cCQL41QsAAb1R4', 
+        },
       }
-    } catch (error) {
-      console.error('An unexpected error occurred:', error);
-      // Handle unexpected errors
+    );
+
+    if (!response.ok) {
+      const errorMessage = await response.text();
+      console.error('Error deleting user account:', errorMessage);
+      
+    } else {
+      console.log('User account deleted successfully.');
+    
     }
+
+    // Log the user out
+    await logout();
+  } catch (error) {
+    console.error('Error during deleteAccount:', error.message);
+    // Handle the error as needed
   }
+};
 
 
   const handleTabChange = (event: { tab: string }) => {
