@@ -11,6 +11,8 @@ export function convertToDbModel(foodEntry: IFoodEntry): FoodEntryModel {
     store_date: foodEntry.storeDate!,
     type: foodEntry.type,
     is_archived: foodEntry.isArchived,
+    quantity: foodEntry.quantity,
+    cost: foodEntry.cost,
   };
 }
 
@@ -24,6 +26,8 @@ export function convertToAppModel(foodEntry: FoodEntryModel): IFoodEntry {
     storeDate: foodEntry.store_date,
     type: foodEntry.type,
     isArchived: foodEntry.is_archived,
+    quantity: foodEntry.quantity,
+    cost: foodEntry.cost,
   };
 }
 

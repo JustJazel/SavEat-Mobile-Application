@@ -52,6 +52,16 @@
           <ion-label position="fixed">Expire Date:</ion-label>
           <ion-input v-model="newEntry.expireDate" type="date" placeholder="Select Date"></ion-input>
         </ion-item>
+        <!-- This is quantity item -->
+        <ion-item>
+          <ion-label position="fixed">Quantity:</ion-label>
+          <ion-input v-model="newEntry.quantity" type="number" placeholder="Enter quantity"></ion-input>
+        </ion-item>
+        <!-- This is unit cost item -->
+        <ion-item>
+          <ion-label position="fixed">Unit Cost:</ion-label>
+          <ion-input v-model="newEntry.cost" type="number" placeholder="Enter unit cost"></ion-input>
+        </ion-item>
         <!-- This is add item -->
         <ion-item><ion-button @click="addEntry" slot="end">Add</ion-button></ion-item>
       </section>
@@ -130,6 +140,8 @@
     foodType: string;
     storeDate: string;
     expireDate: string;
+    quantity: number;
+    cost: number;
   }
 
   const newEntry: FoodEntry = {
@@ -137,6 +149,8 @@
     foodType: '',
     storeDate: '',
     expireDate: '',
+    quantity: 0,
+    cost: 0,
   };
 
   const foodEntries = ref<Array<FoodEntry>>([]);
@@ -156,6 +170,8 @@
       newEntry.foodType = '';
       newEntry.storeDate = '';
       newEntry.expireDate = '';
+      newEntry.quantity = 0;
+      newEntry.cost = 0;
     }
   };
 

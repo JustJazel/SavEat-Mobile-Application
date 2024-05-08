@@ -9,4 +9,6 @@ export interface IFoodEntry {
   storeDate: string;
   expiryDate: string;
   isArchived: boolean;
+  quantity: number;
+  cost: number;
 }

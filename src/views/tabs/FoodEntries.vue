@@ -36,6 +36,17 @@
               <ion-datetime id="expiry-datetime" presentation="date" :min="form.storeDate" v-model="form.expiryDate"></ion-datetime>
             </ion-modal>
           </ion-item>
+          <!-- Food Unit Cost -->
+          <ion-item>
+            <ion-label position="stacked">Unit Cost</ion-label>
+            <ion-input type="number" v-model="form.cost"></ion-input>
+          </ion-item>
+          <!-- Food Quantity -->
+          <ion-item>
+            <ion-label position="stacked">Quantity</ion-label>
+            <ion-input type="number" v-model="form.quantity"></ion-input>
+          </ion-item>
+
           <ion-item>
             <ion-button type="submit" expand="block" :disabled="!form.name" @click="">Add</ion-button>
           </ion-item>
@@ -150,6 +161,8 @@
     storeDate: new Date().toISOString(),
     expiryDate: new Date().toISOString(),
     isArchived: false,
+    quantity: 0,
+    cost: 0,
   };
 
   const form = reactive({ ...initialForm });
@@ -175,6 +188,8 @@
       storeDate: form.storeDate,
       expiryDate: form.expiryDate,
       isArchived: false,
+      quantity: form.quantity,
+      cost: form.cost,
     };
 
     await userStore.addFoodEntry(foodEntry);
