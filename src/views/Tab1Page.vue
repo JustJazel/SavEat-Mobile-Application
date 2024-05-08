@@ -120,9 +120,9 @@
   import { defineComponent } from 'vue';
   import { personOutline } from 'ionicons/icons';
 
-  const supabaseUrl = 'https://nzvvuhyqztnxwnwnrbpk.supabase.co';
+  const supabaseUrl = 'https://ymyyzgnwopjgsaitbpmn.supabase.co';
   const supabaseKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56dnZ1aHlxenRueHdud25yYnBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczODAyMTksImV4cCI6MjAxMjk1NjIxOX0.rFywbICuv1es8aU7xGRALFhyOrxhTr6r62bxMaR2ads';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteXl6Z253b3BqZ3NhaXRicG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQ3NDg2NjgsImV4cCI6MjAzMDMyNDY2OH0.NPTLBrmmUgBTStKSPEwRm-aPxSkWGo1euwtFob16QzQ';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   interface FoodEntry {
