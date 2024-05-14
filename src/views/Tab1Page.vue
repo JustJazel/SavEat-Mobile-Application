@@ -209,4 +209,5 @@
       console.error('Error deleting entry from Supabase:', error);
     }
   };
+  //goodbye world!
 </script>
