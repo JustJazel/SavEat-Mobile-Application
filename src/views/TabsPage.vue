@@ -20,12 +20,11 @@
             <ion-button color="warning" @click="goToEditProfile">Edit</ion-button>
           </ion-item>
 
-          <!--Delete Account
+          <!--Delete Account-->
           <ion-item>
             <ion-label>Delete Account</ion-label>
             <ion-button color="danger" @click="deleteAccount">Delete</ion-button>
           </ion-item>
-          -->
 
           <!--Logout To Saveat-->
           <ion-item>
@@ -123,31 +122,32 @@
     await menuController.close();
   }
 
-  //async function deleteAccount() {
-  //try {
-  // Get the current user ID
-  // const { data: { user } } = await supabase.auth.getUser();
+  async function deleteAccount() {
+    try {
+      // Get the current user ID
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  // this is an error because user might have a null value?? But, like how do null when logged in, yes????
-  //const currentUserId = user.id;
+      // this is an error because user might have a null value?? But, like how do null when logged in, yes????
+      const currentUserId = user.id;
 
-  // Delete the user
-  //const { data, error } = await supabase.auth.admin.deleteUser(currentUserId);
+      // Delete the user
+      const { data, error } = await supabase.auth.admin.deleteUser(currentUserId);
 
-  // if (error) {
-  //  console.error('Error deleting user account:', error.message);
-  // } else {
-  //  console.log('User account deleted successfully:', data);
-  //}
+      if (error) {
+        console.error('Error deleting user account:', error.message);
+      } else {
+        console.log('User account deleted successfully:', data);
+      }
 
-  // Log the user out
-  // await logout();
-
-  //} catch (error) {
-  //  console.error('Error during deleteAccount:', error.message);
-  // Handle the error as needed
-  // }
-  //};
+      // Log the user out
+      await logout();
+    } catch (error) {
+      console.error('Error during deleteAccount:', error.message);
+      //Handle the error as needed
+    }
+  }
 
   const handleTabChange = (event: { tab: string }) => {
     const tabs = Object.values(TAB_ROUTES).map((tab) => tab.name);
