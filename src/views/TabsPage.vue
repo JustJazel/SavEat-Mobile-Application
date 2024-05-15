@@ -129,10 +129,27 @@
         data: { user },
       } = await supabase.auth.getUser();
 
-      // this is an error because user might have a null value?? But, like how do null when logged in, yes????
+      // Checks if user can be accessesed cause IDE is being a stingy bitch
+      if (!user) {
+        console.error('Something went wrong');
+        return;
+      }
+
+      const confirm = window.confirm('This will delete your account permanently and cannot be undone. Press confirm to continue.');
+
+      if (!confirm) {
+        return;
+      }
+
       const currentUserId = user.id;
 
-      // Delete the user
+      // First logout the user
+      await logout();
+
+      // Delete all the items made by said user
+      const { error: deleteEntriesError } = await supabase.from('food_entries').delete().eq('auth_user_id', currentUserId);
+
+      // Then delete the account
       const { data, error } = await supabase.auth.admin.deleteUser(currentUserId);
 
       if (error) {
@@ -140,12 +157,9 @@
       } else {
         console.log('User account deleted successfully:', data);
       }
-
-      // Log the user out
-      await logout();
     } catch (error) {
-      console.error('Error during deleteAccount:', error.message);
-      //Handle the error as needed
+      console.error('Error during deleteAccount:', (error as Error).toString());
+      // Handle the error as needed
     }
   }
 
