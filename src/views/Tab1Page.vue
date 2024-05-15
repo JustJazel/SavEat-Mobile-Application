@@ -34,6 +34,11 @@
           <ion-label position="fixed">Food Name:</ion-label>
           <ion-input v-model="newEntry.foodName" placeholder="Enter food name here"></ion-input>
         </ion-item>
+        <!-- This is food name item-->
+        <ion-item>
+          <ion-label position="fixed">Food Description:</ion-label>
+          <ion-input v-model="newEntry.foodName" placeholder="Enter food description"></ion-input>
+        </ion-item>
         <!-- This is type item -->
         <ion-item>
           <ion-label position="fixed">Food Type:</ion-label>
@@ -142,6 +147,7 @@
     expireDate: string;
     quantity: number;
     cost: number;
+    foodDescription: string;
   }
 
   const newEntry: FoodEntry = {
@@ -151,6 +157,7 @@
     expireDate: '',
     quantity: 0,
     cost: 0,
+    foodDescription: '',
   };
 
   const foodEntries = ref<Array<FoodEntry>>([]);
@@ -172,6 +179,7 @@
       newEntry.expireDate = '';
       newEntry.quantity = 0;
       newEntry.cost = 0;
+      newEntry.foodDescription = '';
     }
   };
 

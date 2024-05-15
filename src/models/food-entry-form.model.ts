@@ -8,4 +8,5 @@ export interface IFoodEntryForm {
   isArchived: boolean;
   quantity: number;
   cost: number;
+  food_description: string;
 }

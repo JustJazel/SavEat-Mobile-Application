@@ -20,6 +20,10 @@
           <ion-item>
             <FoodTypePicker @change="(type) => (form.type = type)" :type="form.type" />
           </ion-item>
+          <ion-item>
+            <ion-label position="stacked">Description</ion-label>
+            <ion-input type="text" v-model="form.food_description"></ion-input>
+          </ion-item>
           <!-- Store Date -->
           <ion-item class="food-entries__date-item">
             <ion-label :position="'stacked'">Store Date</ion-label>
@@ -163,6 +167,7 @@
     isArchived: false,
     quantity: 0,
     cost: 0,
+    food_description: '',
   };
 
   const form = reactive({ ...initialForm });
@@ -181,22 +186,29 @@
   });
 
   async function onAddFoodEntry() {
-    const foodEntry: IFoodEntry = {
-      id: '',
-      name: form.name,
-      type: form.type,
-      storeDate: form.storeDate,
-      expiryDate: form.expiryDate,
-      isArchived: false,
-      quantity: form.quantity,
-      cost: form.cost,
-    };
+    try {
+      const foodEntry: IFoodEntry = {
+        id: '',
+        name: form.name,
+        type: form.type,
+        storeDate: form.storeDate,
+        expiryDate: form.expiryDate,
+        isArchived: false,
+        quantity: form.quantity,
+        cost: form.cost,
+        food_description: form.food_description,
+      };
 
-    await userStore.addFoodEntry(foodEntry);
+      await userStore.addFoodEntry(foodEntry);
 
-    resetForm();
+      resetForm();
+    } catch (error) {
+      // Log any error messages or exceptions that occur during database insertion
+      console.error('Error adding food entry:', error);
+      // You can also show a user-friendly error message if needed
+      // For example: alert('An error occurred while adding the food entry. Please try again.');
+    }
   }
-
   function resetForm() {
     Object.assign(form, initialForm);
   }

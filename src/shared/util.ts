@@ -13,6 +13,7 @@ export function convertToDbModel(foodEntry: IFoodEntry): FoodEntryModel {
     is_archived: foodEntry.isArchived,
     quantity: foodEntry.quantity,
     cost: foodEntry.cost,
+    food_description: foodEntry.food_description,
   };
 }
 
@@ -28,6 +29,7 @@ export function convertToAppModel(foodEntry: FoodEntryModel): IFoodEntry {
     isArchived: foodEntry.is_archived,
     quantity: foodEntry.quantity,
     cost: foodEntry.cost,
+    food_description: foodEntry.food_description,
   };
 }
 

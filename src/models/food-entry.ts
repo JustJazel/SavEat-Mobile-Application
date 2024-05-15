@@ -11,4 +11,5 @@ export interface IFoodEntry {
   isArchived: boolean;
   quantity: number;
   cost: number;
+  food_description: string;
 }
