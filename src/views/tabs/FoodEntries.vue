@@ -50,9 +50,20 @@
             <ion-label position="stacked">Quantity</ion-label>
             <ion-input type="number" v-model="form.quantity"></ion-input>
           </ion-item>
+          <!-- Unit Measurement -->
+          <ion-item>
+            <ion-label position="stacked">Unit Measurement</ion-label>
+            <ion-select v-model="form.unit_measurement" interface="popover">
+              <ion-select-option value="pieces">Pieces</ion-select-option>
+              <ion-select-option value="kg">Kg</ion-select-option>
+              <ion-select-option value="ml">Ml</ion-select-option>
+              <ion-select-option value="l">L</ion-select-option>
+              <ion-select-option value="g">G</ion-select-option>
+            </ion-select>
+          </ion-item>
 
           <ion-item>
-            <ion-button type="submit" expand="block" :disabled="!form.name" @click="">Add</ion-button>
+            <ion-button type="submit" expand="block" :disabled="!form.name">Add</ion-button>
           </ion-item>
         </ion-list>
       </form>
@@ -133,15 +144,15 @@
     IonModal,
     IonButton,
     IonCheckbox,
+    IonSelect,
+    IonSelectOption,
   } from '@ionic/vue';
   import { Ref, reactive, ref, computed } from 'vue';
   import { initFoodEntries } from '../../supabase';
   import { useUserStore } from '../../store';
   import { Tabs, IFoodEntryForm, IFoodEntryFilterType, FoodEntryType, IFoodEntry } from '../../models';
   import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../../services';
-
   import FoodTypePicker from '../../components/FoodTypePicker.vue';
-
   import FoodEntryItem from '../../components/FoodEntryItem.vue';
 
   const userStore = useUserStore();
@@ -168,6 +179,7 @@
     quantity: 0,
     cost: 0,
     food_description: '',
+    unit_measurement: '', // Add this field
   };
 
   const form = reactive({ ...initialForm });
@@ -205,6 +217,7 @@
         quantity: form.quantity,
         cost: form.cost,
         food_description: form.food_description,
+        unit_measurement: form.unit_measurement, // Include this field
       };
 
       await userStore.addFoodEntry(foodEntry);

@@ -12,4 +12,5 @@ export interface IFoodEntry {
   quantity: number;
   cost: number;
   food_description: string;
+  unit_measurement: string;
 }

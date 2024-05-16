@@ -1,6 +1,7 @@
 import { FoodEntryType } from '../../models';
 
 export interface FoodEntryModel {
+  unit_measurement: string;
   food_description: string;
   cost: number;
   quantity: number;

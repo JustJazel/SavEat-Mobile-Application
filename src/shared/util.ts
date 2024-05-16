@@ -14,6 +14,7 @@ export function convertToDbModel(foodEntry: IFoodEntry): FoodEntryModel {
     quantity: foodEntry.quantity,
     cost: foodEntry.cost,
     food_description: foodEntry.food_description,
+    unit_measurement: foodEntry.unit_measurement,
   };
 }
 
@@ -30,6 +31,7 @@ export function convertToAppModel(foodEntry: FoodEntryModel): IFoodEntry {
     quantity: foodEntry.quantity,
     cost: foodEntry.cost,
     food_description: foodEntry.food_description,
+    unit_measurement: foodEntry.unit_measurement,
   };
 }
 
