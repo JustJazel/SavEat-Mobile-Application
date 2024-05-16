@@ -44,6 +44,21 @@
           ></ion-datetime>
         </ion-modal>
       </ion-item>
+      <!-- Food Description -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Description</ion-label>
+        <ion-input type="text" v-model="props.form.food_description"></ion-input>
+      </ion-item>
+      <!-- Food Quantity -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Quantity</ion-label>
+        <ion-input type="number" v-model="props.form.quantity"></ion-input>
+      </ion-item>
+      <!-- Food Cost -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Cost</ion-label>
+        <ion-input type="number" v-model="props.form.cost"></ion-input>
+      </ion-item>
       <ion-item>
         <ion-label>Archived</ion-label>
         <ion-checkbox v-model="props.form.isArchived" label-placement="start"></ion-checkbox>
