@@ -187,6 +187,14 @@
 
   async function onAddFoodEntry() {
     try {
+      if (form.quantity < 0) {
+        alert('Quantity cannot be negative. Please enter a valid value.');
+        return;
+      }
+      if (form.cost < 0) {
+        alert('Cost cannot be negative. Please enter a valid value.');
+        return;
+      }
       const foodEntry: IFoodEntry = {
         id: '',
         name: form.name,
@@ -203,12 +211,10 @@
 
       resetForm();
     } catch (error) {
-      // Log any error messages or exceptions that occur during database insertion
-      console.error('Error adding food entry:', error);
-      // You can also show a user-friendly error message if needed
-      // For example: alert('An error occurred while adding the food entry. Please try again.');
+      alert('An error occurred while adding the food entry. Please try again.');
     }
   }
+
   function resetForm() {
     Object.assign(form, initialForm);
   }

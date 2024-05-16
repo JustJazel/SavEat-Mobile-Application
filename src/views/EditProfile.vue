@@ -9,7 +9,6 @@
 
       <!-- Cover Photo -->
       <div class="cover-photo">
-        <!-- Your cover photo content goes here -->
         <img src="/src/assets/images/saveatCover.jpg" alt="Cover Photo" />
         <div class="cover-ph"></div>
       </div>
@@ -23,29 +22,24 @@
         </div>
         <ion-title v-html="userGreeting"></ion-title>
       </div>
-      <!-- Other content goes here -->
-      <!-- These are the fields -->
+
+      <!-- Fields -->
       <section>
-        <!-- Enter fields here -->
-        <!-- First Name -->
         <ion-item>
           <ion-label position="floating">First Name</ion-label>
           <ion-input v-model="userForm.firstName"></ion-input>
         </ion-item>
 
-        <!-- Last Name -->
         <ion-item>
           <ion-label position="floating">Last Name</ion-label>
           <ion-input v-model="userForm.lastName"></ion-input>
         </ion-item>
 
-        <!-- Email -->
         <ion-item>
           <ion-label position="floating">Email</ion-label>
           <ion-input type="email" v-model="userForm.email"></ion-input>
         </ion-item>
 
-        <!-- Password -->
         <ion-item>
           <ion-label position="stacked">Password</ion-label>
           <ion-input type="password" placeholder="Enter new password" v-model="userNewPassword"></ion-input>
@@ -58,9 +52,9 @@
           <ion-col>
             <ion-button size="default" @click="updateUserProfile">Save</ion-button>
           </ion-col>
-          <!--   <ion-col class="ion-text-end">
+          <ion-col class="ion-text-end">
             <ion-button color="danger" @click="deleteAccount">Delete Account</ion-button>
-          </ion-col>-->
+          </ion-col>
         </ion-row>
       </ion-grid>
     </ion-content>
@@ -84,6 +78,7 @@
     IonRow,
     IonTitle,
     toastController,
+    menuController,
   } from '@ionic/vue';
   import { ref, reactive, onMounted } from 'vue';
   import { useIonRouter } from '@ionic/vue';
@@ -101,7 +96,6 @@
     ...userStore.getUser,
   });
 
-  // Handle changes in authentication state
   supabase.auth.onAuthStateChange((event, session) => {
     if (!session) {
       return;
@@ -116,23 +110,18 @@
   });
 
   const initData = () => {
-    // Update currentUser to display the desired greeting with email and password on separate lines
     userGreeting.value = `Hello, ${userStore.getUserFullName}<br>Email: ${userStore.getUser?.email ?? 'N/A'}`;
   };
 
-  // Fetch user details on component mount
   onMounted(initData);
 
-  // TODO: Move to a service
   const updateUserProfile = async () => {
-    // Check if the user is authenticated
     if (!userStore.getUser) {
       console.error('User not authenticated');
       return;
     }
 
     try {
-      // Update user data in the database
       let userAttributes: UserAttributes = {
         email: userForm.email,
         data: {
@@ -149,13 +138,10 @@
 
       const { data, error } = await supabase.auth.updateUser(userAttributes);
 
-      console.log('Response from Supabase:', data, error);
-
       if (error) {
         toast.message = 'Error saving user data.';
         toast.color = 'danger';
         await toast.present();
-
         console.error('Error saving user:', error.message);
         return;
       }
@@ -164,49 +150,71 @@
       toast.color = 'success';
       await toast.present();
 
-      console.log('Updated User successfully:', data);
+      // If password is changed, log out the user
+      if (userNewPassword.value.trim().length) {
+        await logout();
+        window.location.reload();
+      }
     } catch (error: any) {
       console.error('An Error Occurred:', error.message);
     }
   };
 
-  // TODO: Move to a service
   const deleteAccount = async () => {
-    // Check if the user is authenticated
     if (!userStore.getUser) {
       console.error('User not authenticated');
       return;
     }
 
-    console.log('Deleting user with ID:', userStore.getUser.uuid);
-
     try {
-      // Perform the deletion of the user account using supabase.auth.admin.deleteUser
+      const confirm = window.confirm('This will delete your account permanently and cannot be undone. Press confirm to continue.');
+
+      if (!confirm) {
+        return;
+      }
+
+      // Delete the account
       const { data, error } = await supabase.auth.admin.deleteUser(userStore.getUser.uuid);
 
-      console.log('Response from Supabase:', data, error);
-
-      if (error as unknown as any) {
-        if (error?.message && error.message.includes('401')) {
+      if (error) {
+        if (error.message.includes('401')) {
           console.error('Unauthorized error: User not allowed to perform the delete operation.');
         } else {
-          console.error('Error deleting user:', error?.message);
+          console.error('Error deleting user:', error.message);
         }
         return;
       }
 
       console.log('User deleted successfully:', data);
 
-      // TODO: Handle logout for token, and remove session.
-      router.push({ name: 'login' });
+      // Log out the user
+      await logout();
+
+      window.location.reload();
     } catch (error: any) {
       console.error('Error:', error.message);
     }
   };
 
-  // Go back method
+  const logout = async () => {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.log('logout ~ error. Will redirect to /login view:', error);
+      router.push({ path: '/login', replace: true });
+      return;
+    }
+
+    console.log('User Logged Out.');
+
+    userStore.$reset();
+    console.log('userStore Food Entries: ', userStore.getFoodEntries);
+
+    await menuController.close();
+    router.push({ path: '/login', replace: true });
+  };
+
   const goBack = () => {
-    // Use router to navigate back to the desired route
     router.back();
   };
 </script>
@@ -215,7 +223,6 @@
   .cover-photo {
     width: 100%;
     height: 90px;
-    /* Adjust the height as needed */
     overflow: hidden;
   }
 
@@ -223,7 +230,6 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* Ensures the image covers the entire container */
   }
 
   .profile-container {
@@ -231,21 +237,16 @@
     align-items: center;
     justify-content: flex-start;
     padding: 10px;
-    /* Add padding as needed */
   }
 
   .profile-icon {
     margin-right: 5px;
-    /* Adjust the margin as needed */
   }
 
   .user-icon {
     width: 100px;
-    /* Adjust the width as needed */
     height: 100px;
-    /* Adjust the height as needed */
     border-radius: 20%;
-    /* Optional: If you want a circular icon */
   }
 
   .button-grid {

@@ -20,13 +20,14 @@
             <ion-button color="warning" @click="goToEditProfile">Edit</ion-button>
           </ion-item>
 
-          <!--Delete Account-->
-          <ion-item>
-            <ion-label>Delete Account</ion-label>
-            <ion-button color="danger" @click="deleteAccount">Delete</ion-button>
-          </ion-item>
-
+          <!--Delete Account
+              <ion-item>
+                <ion-label>Delete Account</ion-label>
+                <ion-button color="danger" @click="deleteAccount">Delete</ion-button>
+              </ion-item>
+          -->
           <!--Logout To Saveat-->
+
           <ion-item>
             <ion-label>Logout</ion-label>
             <ion-button color="danger" @click="logout">Logout</ion-button>
@@ -121,7 +122,7 @@
 
     await menuController.close();
   }
-
+  /*
   async function deleteAccount() {
     try {
       // Get the current user ID
@@ -162,7 +163,7 @@
       // Handle the error as needed
     }
   }
-
+*/
   const handleTabChange = (event: { tab: string }) => {
     const tabs = Object.values(TAB_ROUTES).map((tab) => tab.name);
     const tabName = tabs.includes(event.tab) ? event.tab : 'Menu';
