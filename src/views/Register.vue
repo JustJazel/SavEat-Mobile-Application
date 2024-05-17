@@ -23,9 +23,9 @@
           <ion-item></ion-item>
 
           <div class="form__submit ion-text-center">
-            <ion-button type="submit" fill="solid">Create Account</ion-button>
+            <ion-button type="submit" fill="solid">Register Account</ion-button>
             <router-link to="/login">
-              <a>Already have an account?</a>
+              <a>Already have an account? Login here</a>
             </router-link>
           </div>
         </form>

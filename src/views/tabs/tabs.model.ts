@@ -1,4 +1,4 @@
-import { fastFoodOutline, searchOutline, bulbOutline } from 'ionicons/icons';
+import { fastFoodOutline, searchOutline, bulbOutline, newspaperOutline } from 'ionicons/icons';
 
 export const TAB_ROUTES = {
   FOOD_ENTRIES: {
@@ -10,6 +10,11 @@ export const TAB_ROUTES = {
     path: '/tabs/browse',
     name: 'Browse',
     icon: searchOutline,
+  },
+  REPORTS: {
+    path: '/tabs/reports',
+    name: 'Reports', // Name of header
+    icon: newspaperOutline,
   },
   SUGGESTIONS_V2: {
     path: '/tabs/suggestions/v1',

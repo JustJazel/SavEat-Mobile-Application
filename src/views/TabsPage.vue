@@ -1,6 +1,6 @@
 <template>
   <ion-page>
-    <ion-menu content-id="main-content" menu-id="main-menu" side="end">
+    <ion-menu content-id="main-content" menu-id="main-menu" side="start">
       <ion-header>
         <ion-toolbar>
           <ion-title>Hello, {{ `${userStore.getUser?.firstName}` ?? 'Guest' }}!</ion-title>
@@ -39,7 +39,7 @@
     <ion-content id="main-content">
       <ion-header>
         <ion-toolbar>
-          <ion-buttons slot="end">
+          <ion-buttons slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
           <ion-title>{{ pageTitle }}</ion-title>

@@ -22,7 +22,7 @@
           <div class="login__form-submit ion-text-center">
             <ion-button type="submit" fill="solid">Login</ion-button>
             <router-link to="/register">
-              <a>New User? Signup Here</a>
+              <a>New User? Register here</a>
             </router-link>
           </div>
           <ion-label class="login__form-submit ion-text-center">

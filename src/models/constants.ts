@@ -2,6 +2,7 @@ export enum Tabs {
   FOOD_ENTRIES = 'Food Entries',
   BROWSE = 'Browse',
   SUGGESTIONS = 'Suggestions',
+  REPORTS = 'Reports',
 }
 
 export const SUPABASE_URL = 'https://nzvvuhyqztnxwnwnrbpk.supabase.co';

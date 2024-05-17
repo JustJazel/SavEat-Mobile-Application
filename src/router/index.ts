@@ -32,6 +32,12 @@ const routes: Array<RouteRecordRaw> = [
         name: 'food-entries',
         component: () => import('../views/tabs/FoodEntries.vue'),
       },
+      //added for report tab underneath
+      {
+        path: 'reports',
+        name: 'reports',
+        component: () => import('../views/tabs/Reports.vue'),
+      },
       {
         path: 'browse',
         component: () => import('../views/Tab2Page.vue'),
