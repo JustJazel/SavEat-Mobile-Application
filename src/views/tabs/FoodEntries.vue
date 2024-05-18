@@ -179,7 +179,9 @@
     quantity: 0,
     cost: 0,
     food_description: '',
-    unit_measurement: '', // Add this field
+    unit_measurement: '',
+    food_usage: 0,
+    usage_notes: '',
   };
 
   const form = reactive({ ...initialForm });
@@ -217,7 +219,9 @@
         quantity: form.quantity,
         cost: form.cost,
         food_description: form.food_description,
-        unit_measurement: form.unit_measurement, // Include this field
+        unit_measurement: form.unit_measurement,
+        food_usage: 0,
+        usage_notes: '',
       };
 
       await userStore.addFoodEntry(foodEntry);

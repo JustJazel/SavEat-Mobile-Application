@@ -5,7 +5,7 @@
         <ion-title>{{ Tabs.REPORTS }}</ion-title>
       </ion-toolbar>
 
-      <!-- Segment Area-->
+      <!-- Segment Area -->
       <ion-segment v-model="selectedSegment">
         <ion-segment-button value="usageReport">
           <ion-label>Usage Report</ion-label>
@@ -19,152 +19,174 @@
     <ion-content :fullscreen="true">
       <!-- Usage Report Form Template -->
       <div v-if="selectedSegment === 'usageReport'">
-        <form @submit.prevent="onAddFoodEntry">
-          <!--TO DO: update function-->
+        <form @submit.prevent="onAddUsageReport">
           <ion-list>
-            <!-- Usage Report Date-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Usage Report Date -->
             <ion-item class="food-entries__date-item">
-              <ion-label :position="'stacked'">Usage Report Date</ion-label>
+              <ion-label position="stacked">Usage Report Date</ion-label>
               <ion-datetime-button id="store-date-button" datetime="store-datetime"></ion-datetime-button>
               <ion-modal :keep-contents-mounted="true">
-                <ion-datetime id="store-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
+                <ion-datetime id="store-datetime" presentation="date-time" v-model="form.report_date"></ion-datetime>
               </ion-modal>
             </ion-item>
 
-            <!-- Food input-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Search Bar -->
             <ion-item>
-              <ion-label position="stacked">Food:</ion-label>
-              <ion-input type="text" v-model="form.food_description"></ion-input>
+              <ion-searchbar v-model="searchQuery" placeholder="Search food..."></ion-searchbar>
             </ion-item>
 
-            <!-- Amount Used-->
-            <!--TO DO: update naming conventions and function-->
-            <ion-item>
-              <ion-label position="stacked">Amount Used:</ion-label>
-              <ion-input type="number" v-model="form.quantity"></ion-input>
-            </ion-item>
+            <!-- Data Grid -->
+            <div class="table-container">
+              <table class="food-entries-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Amount Used</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="entry in filteredFoodEntries" :key="entry.id">
+                    <td>{{ entry.name }}</td>
+                    <td>{{ entry.quantity }}{{ entry.unit_measurement }}</td>
+                    <td>
+                      <ion-input type="number" v-model="entry.food_usage" placeholder="Enter amount"></ion-input>
+                    </td>
+                    <td>
+                      <ion-input type="text" v-model="entry.usage_notes" placeholder="Enter notes"></ion-input>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-            <!-- Unit Measurement -->
-            <!--TO DO: update naming conventions and function-->
             <ion-item>
-              <ion-label position="stacked">Unit Measurement</ion-label>
-              <ion-select v-model="form.unit_measurement" interface="popover">
-                <ion-select-option value="pieces">Pieces</ion-select-option>
-                <ion-select-option value="kg">Kg</ion-select-option>
-                <ion-select-option value="ml">Ml</ion-select-option>
-                <ion-select-option value="l">L</ion-select-option>
-                <ion-select-option value="g">G</ion-select-option>
-              </ion-select>
-            </ion-item>
-
-            <ion-item>
-              <ion-button type="submit" expand="block" :disabled="!form.name">Add</ion-button>
+              <ion-button type="submit" expand="block" :disabled="!isSubmitEnabled">Submit Report</ion-button>
             </ion-item>
           </ion-list>
         </form>
 
-        <!-- Filtered Food Entry List Template -->
-        <ion-list class="food-entries__list" v-if="filteredFoodEntries.length">
-          <FoodEntryItem
-            v-for="entry in filteredFoodEntries"
-            :entry="entry"
-            @on-toggle="debounceArchiveToggle($event)"
-            @on-delete="onDeleteEntry($event)"
-            @on-edit="onEditEntry($event)"
-          />
-        </ion-list>
-
-        <!-- Get Original Food Entry List Template -->
-        <ion-list class="food-entries__list" v-else>
-          <FoodEntryItem
-            v-for="entry in userStore.foodEntries"
-            :entry="entry"
-            @on-toggle="debounceArchiveToggle($event)"
-            @on-delete="onDeleteEntry($event)"
-            @on-edit="onEditEntry($event)"
-          />
-        </ion-list>
-
         <ion-label v-if="!userStore.foodEntries.length">No items. Please add entries.</ion-label>
-        <br />
+
+        <!-- Display Usage Reports -->
+        <ion-list>
+          <ion-item v-for="report in uniqueUsageReports" :key="report.usage_id" @click="openReportDetails(report.usage_id)">
+            <ion-label>Usage Report {{ formatDate(report.report_date) }}</ion-label>
+          </ion-item>
+        </ion-list>
       </div>
 
-      <!-- Restock Report Template -->
+      <!-- Restock Report Form Template -->
       <div v-if="selectedSegment === 'restockReport'">
-        <!-- Add your Restock Report form and logic here -->
-        <form @submit.prevent="onAddFoodEntry">
-          <!--TO DO: update function-->
+        <form @submit.prevent="onAddRestockReport">
           <ion-list>
-            <!-- Usage Report Date-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Restock Report Date -->
             <ion-item class="food-entries__date-item">
-              <ion-label :position="'stacked'">Restock Report Date</ion-label>
-              <ion-datetime-button id="store-date-button" datetime="store-datetime"></ion-datetime-button>
+              <ion-label position="stacked">Restock Report Date</ion-label>
+              <ion-datetime-button id="restock-date-button" datetime="restock-datetime"></ion-datetime-button>
               <ion-modal :keep-contents-mounted="true">
-                <ion-datetime id="store-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
+                <ion-datetime id="restock-datetime" presentation="date" v-model="restockForm.restock_date"></ion-datetime>
               </ion-modal>
             </ion-item>
 
-            <!-- Food input-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Search Bar -->
             <ion-item>
-              <ion-label position="stacked">Food:</ion-label>
-              <ion-input type="text" v-model="form.food_description"></ion-input>
+              <ion-searchbar v-model="restockSearchQuery" placeholder="Search food..."></ion-searchbar>
             </ion-item>
 
-            <!-- Amount Used-->
-            <!--TO DO: update naming conventions and function-->
-            <ion-item>
-              <ion-label position="stacked">Amount Used:</ion-label>
-              <ion-input type="number" v-model="form.quantity"></ion-input>
-            </ion-item>
+            <!-- Data Grid -->
+            <div class="table-container">
+              <table class="food-entries-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Amount Restocked</th>
+                    <th>Total Cost</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="entry in filteredRestockFoodEntries" :key="entry.id">
+                    <td>{{ entry.name }}</td>
+                    <td>{{ entry.quantity }}{{ entry.unit_measurement }}</td>
+                    <td>
+                      <ion-input type="number" v-model="entry.restock_amount" placeholder="Enter amount"></ion-input>
+                    </td>
+                    <td>
+                      <ion-input type="number" v-model="entry.total_cost" placeholder="Enter total cost"></ion-input>
+                    </td>
+                    <td>
+                      <ion-input type="text" v-model="entry.restock_notes" placeholder="Enter notes"></ion-input>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-            <!-- Unit Measurement -->
-            <!--TO DO: update naming conventions and function-->
             <ion-item>
-              <ion-label position="stacked">Unit Measurement</ion-label>
-              <ion-select v-model="form.unit_measurement" interface="popover">
-                <ion-select-option value="pieces">Pieces</ion-select-option>
-                <ion-select-option value="kg">Kg</ion-select-option>
-                <ion-select-option value="ml">Ml</ion-select-option>
-                <ion-select-option value="l">L</ion-select-option>
-                <ion-select-option value="g">G</ion-select-option>
-              </ion-select>
-            </ion-item>
-
-            <ion-item>
-              <ion-button type="submit" expand="block" :disabled="!form.name">Add</ion-button>
+              <ion-button type="submit" expand="block" :disabled="!isRestockSubmitEnabled">Submit Report</ion-button>
             </ion-item>
           </ion-list>
         </form>
 
-        <!-- Filtered Food Entry List Template -->
-        <ion-list class="food-entries__list" v-if="filteredFoodEntries.length">
-          <FoodEntryItem
-            v-for="entry in filteredFoodEntries"
-            :entry="entry"
-            @on-toggle="debounceArchiveToggle($event)"
-            @on-delete="onDeleteEntry($event)"
-            @on-edit="onEditEntry($event)"
-          />
-        </ion-list>
-
-        <!-- Get Original Food Entry List Template -->
-        <ion-list class="food-entries__list" v-else>
-          <FoodEntryItem
-            v-for="entry in userStore.foodEntries"
-            :entry="entry"
-            @on-toggle="debounceArchiveToggle($event)"
-            @on-delete="onDeleteEntry($event)"
-            @on-edit="onEditEntry($event)"
-          />
-        </ion-list>
-
         <ion-label v-if="!userStore.foodEntries.length">No items. Please add entries.</ion-label>
-        <br />
+
+        <!-- Display Restock Reports -->
+        <ion-list>
+          <ion-item v-for="report in uniqueRestockReports" :key="report.restock_id" @click="openRestockReportDetails(report.restock_id)">
+            <ion-label>Restock Report {{ formatDate(report.restock_date) }}</ion-label>
+          </ion-item>
+        </ion-list>
       </div>
+
+      <!-- Usage Report Details Modal -->
+      <ion-modal :is-open="isModalOpen" @did-dismiss="closeModal">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Usage Report Details</ion-title>
+            <ion-buttons slot="end">
+              <ion-button @click="closeModal">Close</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <ion-list>
+            <ion-item v-for="detail in reportDetails" :key="detail.id">
+              <ion-label>
+                <h2>{{ detail.name }}</h2>
+                <p>Used: {{ detail.food_usage }}</p>
+                <p>Notes: {{ detail.usage_notes }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-modal>
+
+      <!-- Restock Report Details Modal -->
+      <ion-modal :is-open="isRestockModalOpen" @did-dismiss="closeRestockModal">
+        <ion-header>
+          <ion-toolbar>
+            <ion-title>Restock Report Details</ion-title>
+            <ion-buttons slot="end">
+              <ion-button @click="closeRestockModal">Close</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content>
+          <ion-list>
+            <ion-item v-for="detail in restockReportDetails" :key="detail.id">
+              <ion-label>
+                <h2>{{ detail.name }}</h2>
+                <p>Restocked: {{ detail.restock_amount }}</p>
+                <p>Total Cost: {{ detail.total_cost }}</p>
+                <p>Notes: {{ detail.restock_notes }}</p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+        </ion-content>
+      </ion-modal>
     </ion-content>
   </ion-page>
 </template>
@@ -188,6 +210,37 @@
       font-weight: bold;
     }
   }
+
+  .table-container {
+    max-height: 400px; /* Adjust the height as needed */
+    overflow-y: auto;
+  }
+
+  .food-entries-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .food-entries-table th,
+  .food-entries-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+  }
+
+  .food-entries-table th {
+    background-color: #f2f2f2;
+    text-align: left;
+  }
+
+  .food-entries-table td {
+    text-align: center;
+  }
+
+  .ion-input {
+    max-width: 100px;
+    margin: 0 auto;
+  }
 </style>
 
 <script setup lang="ts">
@@ -206,96 +259,319 @@
     IonDatetimeButton,
     IonModal,
     IonButton,
-    IonCheckbox,
-    IonSelect,
-    IonSelectOption,
     IonSegment,
     IonSegmentButton,
+    IonSearchbar,
   } from '@ionic/vue';
-  import { Ref, reactive, ref, computed } from 'vue';
-  import { initFoodEntries } from '../../supabase';
+  import { reactive, ref, computed } from 'vue';
+  import shortid from 'shortid';
+  import { initFoodEntries, updateFoodEntry, insertUsageReport, insertRestockReport, supabase } from '../../supabase';
   import { useUserStore } from '../../store';
-  import { Tabs, IFoodEntryForm, IFoodEntryFilterType, FoodEntryType, IFoodEntry } from '../../models';
-  import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../../services';
-  import FoodTypePicker from '../../components/FoodTypePicker.vue';
-  import FoodEntryItem from '../../components/FoodEntryItem.vue';
+  import { Tabs, IUsageReportForm, IRestockReportForm } from '../../models';
+
+  interface UsageReport {
+    usage_id: string;
+    report_date: string;
+  }
+
+  interface RestockReport {
+    restock_id: string;
+    restock_date: string;
+  }
+
+  interface ReportDetail {
+    id: string;
+    name: string;
+    food_usage: number;
+    usage_notes: string;
+  }
+
+  interface RestockDetail {
+    id: string;
+    name: string;
+    restock_amount: number;
+    total_cost: number;
+    restock_notes: string;
+  }
 
   const userStore = useUserStore();
 
-  const filterTypes: Ref<IFoodEntryFilterType[]> = ref([
-    {
-      name: 'Perishable',
-      value: FoodEntryType.PERISHABLE,
-      checked: false,
-    },
-    {
-      name: 'Processed',
-      value: FoodEntryType.PROCESSED,
-      checked: false,
-    },
-  ]);
+  // Initialize food entries with restock_amount and total_cost
+  userStore.foodEntries.forEach((entry) => {
+    entry.restock_amount = entry.restock_amount ?? 0;
+    entry.total_cost = entry.total_cost ?? 0;
+    entry.restock_notes = entry.restock_notes ?? '';
+  });
 
-  const initialForm: IFoodEntryForm = {
-    name: '',
-    type: FoodEntryType.PERISHABLE,
-    storeDate: new Date().toISOString(),
-    expiryDate: new Date().toISOString(),
-    isArchived: false,
-    quantity: 0,
-    cost: 0,
-    food_description: '',
-    unit_measurement: '', // Add this field
+  const initialForm: IUsageReportForm = {
+    report_date: new Date().toISOString(), // Ensure report_date is set initially
+    food_id: '',
+    food_usage: 0,
+    usage_notes: '',
+    usage_id: '',
+    auth_user_id: '',
+  };
+
+  const initialRestockForm: IRestockReportForm = {
+    restock_date: new Date().toISOString(), // Ensure restock_date is set initially
+    food_id: '',
+    restock_amount: 0,
+    total_cost: 0,
+    restock_notes: '',
+    restock_id: '',
+    auth_user_id: '',
   };
 
   const form = reactive({ ...initialForm });
+  const restockForm = reactive({ ...initialRestockForm });
+  const searchQuery = ref<string>('');
+  const restockSearchQuery = ref<string>('');
 
-  const filteredFoodEntries = computed(() => {
-    return userStore.foodEntries.filter((entry) => {
-      return filterTypes.value.some((filter) => {
-        return filter.checked && filter.value === entry.type;
-      });
-    });
-  });
-
-  const selectedSegment = ref('usageReport'); // Track the selected segment
+  const selectedSegment = ref('usageReport');
+  const uniqueUsageReports = ref<UsageReport[]>([]);
+  const uniqueRestockReports = ref<RestockReport[]>([]);
+  const reportDetails = ref<ReportDetail[]>([]);
+  const restockReportDetails = ref<RestockDetail[]>([]);
+  const isModalOpen = ref(false);
+  const isRestockModalOpen = ref(false);
 
   onIonViewDidEnter(() => {
     initFoodEntries();
-    openExpiringEntriesModal();
+    fetchUniqueUsageReports();
+    fetchUniqueRestockReports();
   });
 
-  async function onAddFoodEntry() {
-    try {
-      if (form.quantity < 0) {
-        alert('Quantity cannot be negative. Please enter a valid value.');
-        return;
-      }
-      if (form.cost < 0) {
-        alert('Cost cannot be negative. Please enter a valid value.');
-        return;
-      }
-      const foodEntry: IFoodEntry = {
-        id: '',
-        name: form.name,
-        type: form.type,
-        storeDate: form.storeDate,
-        expiryDate: form.expiryDate,
-        isArchived: false,
-        quantity: form.quantity,
-        cost: form.cost,
-        food_description: form.food_description,
-        unit_measurement: form.unit_measurement, // Include this field
-      };
-
-      await userStore.addFoodEntry(foodEntry);
-
-      resetForm();
-    } catch (error) {
-      alert('An error occurred while adding the food entry. Please try again.');
+  const filteredFoodEntries = computed(() => {
+    if (!searchQuery.value) {
+      return userStore.foodEntries;
     }
-  }
+    return userStore.foodEntries.filter((entry) => entry.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  });
 
-  function resetForm() {
-    Object.assign(form, initialForm);
-  }
+  const filteredRestockFoodEntries = computed(() => {
+    if (!restockSearchQuery.value) {
+      return userStore.foodEntries;
+    }
+    return userStore.foodEntries.filter((entry) => entry.name.toLowerCase().includes(restockSearchQuery.value.toLowerCase()));
+  });
+
+  const onDateChange = (event: any) => {
+    form.report_date = event.target.value;
+  };
+
+  const isSubmitEnabled = computed(() => {
+    return userStore.foodEntries.some((entry) => entry.food_usage > 0);
+  });
+
+  const isRestockSubmitEnabled = computed(() => {
+    return userStore.foodEntries.some((entry) => entry.restock_amount);
+  });
+
+  const getCurrentUser = async () => {
+    const { data: user, error } = await supabase.auth.getUser();
+    if (error) {
+      throw new Error('User not authenticated');
+    }
+    return user.user;
+  };
+
+  const fetchUniqueUsageReports = async () => {
+    const { data, error } = await supabase.from('usage_report').select('usage_id, report_date').order('report_date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching usage reports:', error);
+      return;
+    }
+
+    const reports = data as UsageReport[];
+    const uniqueReports = reports.reduce((acc: UsageReport[], report: UsageReport) => {
+      if (!acc.some((r) => r.usage_id === report.usage_id)) {
+        acc.push(report);
+      }
+      return acc;
+    }, []);
+
+    uniqueUsageReports.value = uniqueReports;
+  };
+
+  const fetchUniqueRestockReports = async () => {
+    const { data, error } = await supabase
+      .from('restock_report')
+      .select('restock_id, restock_date')
+      .order('restock_date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching restock reports:', error);
+      return;
+    }
+
+    const reports = data as RestockReport[];
+    const uniqueReports = reports.reduce((acc: RestockReport[], report: RestockReport) => {
+      if (!acc.some((r) => r.restock_id === report.restock_id)) {
+        acc.push(report);
+      }
+      return acc;
+    }, []);
+
+    uniqueRestockReports.value = uniqueReports;
+  };
+
+  const formatDate = (dateString: string): string => {
+    const date = new Date(dateString);
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${month}-${day}-${year}`;
+  };
+
+  const openReportDetails = async (usageId: string) => {
+    const { data, error } = await supabase.from('usage_report').select('id, food_id, food_usage, usage_notes').eq('usage_id', usageId);
+
+    if (error) {
+      console.error('Error fetching report details:', error);
+      return;
+    }
+
+    const details = data.map((detail: any) => ({
+      id: detail.id,
+      name: userStore.foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
+      food_usage: detail.food_usage,
+      usage_notes: detail.usage_notes,
+    }));
+
+    reportDetails.value = details;
+    isModalOpen.value = true;
+  };
+
+  const openRestockReportDetails = async (restockId: string) => {
+    const { data, error } = await supabase
+      .from('restock_report')
+      .select('id, food_id, restock_amount, total_cost, restock_notes')
+      .eq('restock_id', restockId);
+
+    if (error) {
+      console.error('Error fetching report details:', error);
+      return;
+    }
+
+    const details = data.map((detail: any) => ({
+      id: detail.id,
+      name: userStore.foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
+      restock_amount: detail.restock_amount,
+      total_cost: detail.total_cost,
+      restock_notes: detail.restock_notes,
+    }));
+
+    restockReportDetails.value = details;
+    isRestockModalOpen.value = true;
+  };
+
+  const closeModal = () => {
+    isModalOpen.value = false;
+  };
+
+  const closeRestockModal = () => {
+    isRestockModalOpen.value = false;
+  };
+
+  const onAddUsageReport = async () => {
+    try {
+      const user = await getCurrentUser();
+      const auth_user_id = user.id;
+      const usageId = shortid.generate();
+
+      // Use the date from form.report_date or current date if not set
+      const report_date = form.report_date ? new Date(form.report_date).toISOString() : new Date().toISOString();
+
+      const usageReports = userStore.foodEntries
+        .filter((entry) => entry.food_usage > 0 && entry.food_usage !== null)
+        .map((entry) => {
+          if (entry.food_usage > entry.quantity) {
+            throw new Error(`Usage amount for ${entry.name} exceeds available quantity.`);
+          }
+          return {
+            usage_id: usageId,
+            report_date,
+            food_id: entry.id,
+            food_usage: entry.food_usage,
+            usage_notes: entry.usage_notes,
+            auth_user_id,
+          };
+        });
+
+      await Promise.all(
+        usageReports.map(async (report) => {
+          await insertUsageReport(report);
+
+          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          if (foodEntry) {
+            foodEntry.quantity -= report.food_usage;
+            await updateFoodEntry(foodEntry);
+          }
+        }),
+      );
+
+      // Reset usage and notes, but not the date
+      userStore.foodEntries.forEach((entry) => {
+        entry.food_usage = 0;
+        entry.usage_notes = '';
+      });
+
+      alert('Usage report submitted successfully.');
+      fetchUniqueUsageReports();
+    } catch (error) {
+      console.error('Error adding usage report:', error);
+      alert(`Failed to submit usage report`);
+    }
+  };
+
+  const onAddRestockReport = async () => {
+    try {
+      const user = await getCurrentUser();
+      const auth_user_id = user.id;
+      const restockId = shortid.generate();
+
+      // Use the date from restockForm.restock_date or current date if not set
+      const restock_date = restockForm.restock_date ? new Date(restockForm.restock_date).toISOString() : new Date().toISOString();
+
+      const restockReports = userStore.foodEntries
+        .filter((entry) => (entry.restock_amount ?? 0) > 0 && (entry.total_cost ?? 0) > 0)
+        .map((entry) => {
+          return {
+            restock_id: restockId,
+            restock_date,
+            food_id: entry.id,
+            restock_amount: Number(entry.restock_amount) ?? 0,
+            total_cost: Number(entry.total_cost) ?? 0,
+            restock_notes: entry.restock_notes ?? '',
+            auth_user_id,
+          };
+        });
+
+      await Promise.all(
+        restockReports.map(async (report) => {
+          await insertRestockReport(report);
+
+          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          if (foodEntry) {
+            foodEntry.quantity += Number(report.restock_amount); // Ensure it's a number
+            await updateFoodEntry(foodEntry);
+          }
+        }),
+      );
+
+      // Reset restock and notes, but not the date
+      userStore.foodEntries.forEach((entry) => {
+        entry.restock_amount = 0;
+        entry.total_cost = 0;
+        entry.restock_notes = '';
+      });
+
+      alert('Restock report submitted successfully.');
+      fetchUniqueRestockReports();
+    } catch (error) {
+      console.error('Error adding restock report:', error);
+      alert(`Failed to submit restock report`);
+    }
+  };
 </script>
