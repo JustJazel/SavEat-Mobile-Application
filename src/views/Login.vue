@@ -8,7 +8,7 @@
     <ion-content>
       <ion-list :inset="true">
         <div class="login__logo">
-          <img src="@assets/images/saveatLogo.png" alt="logo" />
+          <img src="@assets/images/LogoSaveat.png" alt="logo" />
         </div>
         <form @submit.prevent="login" class="login__form">
           <ion-item>
@@ -44,7 +44,7 @@
       max-width: 400px;
 
       img {
-        max-width: 100%;
+        max-width: 30%;
         object-fit: contain;
         width: 100%;
       }

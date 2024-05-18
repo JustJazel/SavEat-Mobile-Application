@@ -90,7 +90,7 @@
    */
 
   body {
-    --ion-color-primary: #333531; /* Dark mode primary color, icons below the*/
+    --ion-color-primary: #477857; /* Dark mode primary color, icons below the*/
     --ion-color-primary-rgb: 143, 148, 134;
     --ion-color-primary-contrast: #e7ece2; /* Dark mode text color */
     --ion-color-primary-contrast-rgb: 231, 236, 226;
@@ -161,32 +161,47 @@
 
   .md body {
     /* Saveat body background */ /*section color*/
-    --ion-background-color: #cbd4c2;
-    --ion-item-background: #cbd4c2;
-
+    --ion-background-color: #a0b5a2;
+    --ion-item-background: #a0b5a2;
     --ion-background-color-rgb: 18, 18, 18;
 
     /*text and border color content color**/
-    --ion-text-color: #405729;
+    --ion-text-color: #020e02;
     --ion-text-color-rgb: 255, 255, 255;
     --ion-border-color: #6e8a52;
 
     /* #84a564 */
-    /*top bar color */
-    --ion-toolbar-background: #84a564;
+    /*top bar and low bar color */
+    --ion-toolbar-background: #1e2e1f;
+    --ion-tab-bar-background: #1e2e1f;
+    --ion-toolbar-color: rgb(162, 163, 163); /*menu*/
 
     --ion-button-background: #333531;
     --ion-button-color: #e7ece2;
 
-    --ion-tab-bar-background: #cbd4c2;
     /*bottom bar color   #196F3D*/
-    --ion-color-step-700: #b8b8b8;
+    --ion-color-step-700: #eeeeee;
     --ion-card-background: #d4c2c2;
   }
 
   /* Specific button styles for dark mode */
   ion-button {
-    --background: #333531;
+    --background: #353331;
     --color: #e7ece2;
+  }
+
+  ion-toolbar,
+  ion-header,
+  ion-tab-bar {
+    --background: var(--ion-toolbar-background);
+    --color: var(--ion-toolbar-color);
+  }
+
+  ion-toolbar {
+    --border-color: transparent;
+  }
+
+  ion-tab-bar {
+    --border-color: transparent;
   }
 }

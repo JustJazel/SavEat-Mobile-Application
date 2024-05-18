@@ -42,28 +42,24 @@
 
             <!-- Data Grid -->
             <div class="table-container">
-              <table class="food-entries-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Amount Used</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="entry in filteredFoodEntries" :key="entry.id">
-                    <td>{{ entry.name }}</td>
-                    <td>{{ entry.quantity }}{{ entry.unit_measurement }}</td>
-                    <td>
-                      <ion-input type="number" v-model="entry.food_usage" placeholder="Enter amount"></ion-input>
-                    </td>
-                    <td>
-                      <ion-input type="text" v-model="entry.usage_notes" placeholder="Enter notes"></ion-input>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="3">Name</ion-col>
+                  <ion-col size="3">Quantity</ion-col>
+                  <ion-col size="3">Amount Used</ion-col>
+                  <ion-col size="3">Notes</ion-col>
+                </ion-row>
+                <ion-row v-for="entry in filteredFoodEntries" :key="entry.id">
+                  <ion-col size="3">{{ entry.name }}</ion-col>
+                  <ion-col size="3">{{ entry.quantity }} {{ entry.unit_measurement }}</ion-col>
+                  <ion-col size="3">
+                    <ion-input type="number" v-model="entry.food_usage" placeholder="Enter"></ion-input>
+                  </ion-col>
+                  <ion-col size="3">
+                    <ion-input type="text" v-model="entry.usage_notes" placeholder="Enter"></ion-input>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
             </div>
 
             <ion-item>
@@ -102,32 +98,28 @@
 
             <!-- Data Grid -->
             <div class="table-container">
-              <table class="food-entries-table">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Amount Restocked</th>
-                    <th>Total Cost</th>
-                    <th>Notes</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="entry in filteredRestockFoodEntries" :key="entry.id">
-                    <td>{{ entry.name }}</td>
-                    <td>{{ entry.quantity }}{{ entry.unit_measurement }}</td>
-                    <td>
-                      <ion-input type="number" v-model="entry.restock_amount" placeholder="Enter amount"></ion-input>
-                    </td>
-                    <td>
-                      <ion-input type="number" v-model="entry.total_cost" placeholder="Enter total cost"></ion-input>
-                    </td>
-                    <td>
-                      <ion-input type="text" v-model="entry.restock_notes" placeholder="Enter notes"></ion-input>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+              <ion-grid fixed>
+                <ion-row>
+                  <ion-col size="2.2">Name</ion-col>
+                  <ion-col size="2.2">Quantity</ion-col>
+                  <ion-col size="2.2">Amount Restock</ion-col>
+                  <ion-col size="2.2">Total Cost</ion-col>
+                  <ion-col size="2.2">Notes</ion-col>
+                </ion-row>
+                <ion-row v-for="entry in filteredRestockFoodEntries" :key="entry.id">
+                  <ion-col size="2.2">{{ entry.name }}</ion-col>
+                  <ion-col size="2.2">{{ entry.quantity }} {{ entry.unit_measurement }}</ion-col>
+                  <ion-col size="2.2">
+                    <ion-input type="number" v-model="entry.restock_amount" placeholder="Enter"></ion-input>
+                  </ion-col>
+                  <ion-col size="2.2">
+                    <ion-input type="number" v-model="entry.total_cost" placeholder="Enter"></ion-input>
+                  </ion-col>
+                  <ion-col size="2.2">
+                    <ion-input type="text" v-model="entry.restock_notes" placeholder="Enter"></ion-input>
+                  </ion-col>
+                </ion-row>
+              </ion-grid>
             </div>
 
             <!-- Total Cost -->
@@ -255,29 +247,53 @@
   .ion-input {
     max-width: 100px;
     margin: 0 auto;
-    /* Custom styles for the Restock Report segment button */
-    ion-segment-button.restock-report-button {
-      color: #59655a !important;
-    }
+  }
 
-    ion-segment-button.restock-report-button.segment-button-checked {
-      color: #333531 !important; /* Optional: Change the text color when selected */
-      background-color: #948f86 !important; /* Change background color when selected */
-    }
+  // Placeholder text size
+  ion-input::part(native)::-webkit-input-placeholder {
+    font-size: 10px; /* Smaller size */
+  }
 
-    ion-segment-button.usage-report-button {
-      color: #59655a !important;
-    }
+  ion-input::part(native)::-moz-placeholder {
+    font-size: 10px; /* Smaller size */
+  }
 
-    ion-segment-button.usage-report-button.segment-button-checked {
-      color: #333531 !important; /* Optional: Change the text color when selected */
-      background-color: #8f9486 !important; /* Change background color when selected */
-    }
+  ion-input::part(native):-ms-input-placeholder {
+    font-size: 10px; /* Smaller size */
+  }
 
-    .segment-button-checked {
-      background-color: #8f9486 !important;
-      color: #333531 !important; /* Optional: Change the text color when selected */
-    }
+  ion-input::part(native)::-ms-input-placeholder {
+    font-size: 10px; /* Smaller size */
+  }
+
+  ion-input::part(native)::placeholder {
+    font-size: 10px; /* Smaller size */
+  }
+
+  // Segment button styles
+  ion-segment-button.restock-report-button {
+    color: #59655a !important;
+    background-color: #d3d8ca;
+  }
+
+  ion-segment-button.usage-report-button {
+    color: #59655a !important;
+    background-color: #d3d8ca;
+  }
+
+  ion-segment-button.restock-report-button.segment-button-checked {
+    color: #333531 !important; /* Optional: Change the text color when selected */
+    background-color: #aebf8f !important; /* Change background color when selected */
+  }
+
+  ion-segment-button.usage-report-button.segment-button-checked {
+    color: #333531 !important; /* Optional: Change the text color when selected */
+    background-color: #aebf8f !important; /* Change background color when selected */
+  }
+
+  .segment-button-checked {
+    background-color: #8f9486 !important;
+    color: #333531 !important; /* Optional: Change the text color when selected */
   }
 </style>
 

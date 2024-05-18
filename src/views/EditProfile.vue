@@ -222,6 +222,9 @@
 </script>
 
 <style scoped>
+  ion-icon {
+    font-size: 38px; /* You can adjust this value as needed */
+  }
   .cover-photo {
     width: 100%;
     height: 90px;
