@@ -17,9 +17,10 @@
     <!-- Content -->
     <ion-content>
       <div class="profile-container">
-        <div class="profile-icon">
+        <ion-icon size="Large" :icon="personCircleOutline"></ion-icon>
+        <!-- <div class="profile-icon">
           <img src="/src/assets/images/saveatIcon.png" alt="Custom Icon" class="user-icon" />
-        </div>
+        </div> -->
         <ion-title v-html="userGreeting"></ion-title>
       </div>
 
@@ -85,6 +86,7 @@
   import { UserAttributes } from '@supabase/supabase-js';
   import { supabase } from '../supabase';
   import { useUserStore, IUser } from '../store';
+  import { personCircleOutline } from 'ionicons/icons';
 
   const userStore = useUserStore();
   const router = useIonRouter();
