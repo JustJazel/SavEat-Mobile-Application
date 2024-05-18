@@ -3,14 +3,19 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>{{ Tabs.REPORTS }}</ion-title>
+        <ion-item slot="end">
+          <ion-button>
+            <ion-icon class="black-icon" name="notifications-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
       </ion-toolbar>
 
       <!-- Segment Area -->
       <ion-segment v-model="selectedSegment">
-        <ion-segment-button value="usageReport">
+        <ion-segment-button value="usageReport" class="usage-report-button">
           <ion-label>Usage Report</ion-label>
         </ion-segment-button>
-        <ion-segment-button value="restockReport">
+        <ion-segment-button value="restockReport" class="restock-report-button">
           <ion-label>Restock Report</ion-label>
         </ion-segment-button>
       </ion-segment>
@@ -125,6 +130,12 @@
               </table>
             </div>
 
+            <!-- Total Cost -->
+            <ion-item>
+              <ion-label position="stacked">Total Cost:</ion-label>
+              <ion-input type="number" v-model="form.quantity"></ion-input>
+            </ion-item>
+
             <ion-item>
               <ion-button type="submit" expand="block" :disabled="!isRestockSubmitEnabled">Submit Report</ion-button>
             </ion-item>
@@ -192,6 +203,10 @@
 </template>
 
 <style scoped lang="scss">
+  .black-icon {
+    color: black !important;
+  }
+
   .food-entries {
     &__date-item {
       --padding-start: 0;
@@ -240,10 +255,35 @@
   .ion-input {
     max-width: 100px;
     margin: 0 auto;
+    /* Custom styles for the Restock Report segment button */
+    ion-segment-button.restock-report-button {
+      color: #59655a !important;
+    }
+
+    ion-segment-button.restock-report-button.segment-button-checked {
+      color: #333531 !important; /* Optional: Change the text color when selected */
+      background-color: #948f86 !important; /* Change background color when selected */
+    }
+
+    ion-segment-button.usage-report-button {
+      color: #59655a !important;
+    }
+
+    ion-segment-button.usage-report-button.segment-button-checked {
+      color: #333531 !important; /* Optional: Change the text color when selected */
+      background-color: #8f9486 !important; /* Change background color when selected */
+    }
+
+    .segment-button-checked {
+      background-color: #8f9486 !important;
+      color: #333531 !important; /* Optional: Change the text color when selected */
+    }
   }
 </style>
 
 <script setup lang="ts">
+  import 'ionicons';
+
   import {
     IonPage,
     IonHeader,
@@ -262,12 +302,17 @@
     IonSegment,
     IonSegmentButton,
     IonSearchbar,
+    IonIcon,
   } from '@ionic/vue';
   import { reactive, ref, computed } from 'vue';
   import shortid from 'shortid';
   import { initFoodEntries, updateFoodEntry, insertUsageReport, insertRestockReport, supabase } from '../../supabase';
   import { useUserStore } from '../../store';
   import { Tabs, IUsageReportForm, IRestockReportForm } from '../../models';
+  import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../../services';
+  import FoodTypePicker from '../../components/FoodTypePicker.vue';
+  import FoodEntryItem from '../../components/FoodEntryItem.vue';
+  import { notifications } from 'ionicons/icons';
 
   interface UsageReport {
     usage_id: string;

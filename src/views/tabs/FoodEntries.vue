@@ -9,21 +9,26 @@
       <!-- Add Food Entry Form Template -->
       <form @submit.prevent="onAddFoodEntry">
         <ion-list>
+          <!--Add entry-->
           <ion-item>
-            <ion-input
-              label="Add an entry: "
-              placeholder="store some food here..."
-              label-placement="stacked"
-              v-model="form.name"
-            ></ion-input>
+            <ion-input label="Add an entry: " placeholder="add food here" label-placement="stacked" v-model="form.name"></ion-input>
           </ion-item>
+
+          <!--Food Picker-->
           <ion-item>
             <FoodTypePicker @change="(type) => (form.type = type)" :type="form.type" />
           </ion-item>
-          <ion-item>
-            <ion-label position="stacked">Description</ion-label>
-            <ion-input type="text" v-model="form.food_description"></ion-input>
+
+          <!--Description-->
+          <ion-item class="description-item">
+            <ion-input
+              label="Description: "
+              placeholder="food notes here"
+              label-placement="stacked"
+              v-model="form.food_description"
+            ></ion-input>
           </ion-item>
+
           <!-- Store Date -->
           <ion-item class="food-entries__date-item">
             <ion-label :position="'stacked'">Store Date</ion-label>
@@ -32,6 +37,7 @@
               <ion-datetime id="store-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
             </ion-modal>
           </ion-item>
+
           <!-- Expiry Date -->
           <ion-item class="food-entries__date-item">
             <ion-label :position="'stacked'">Expiry Date</ion-label>
@@ -40,18 +46,19 @@
               <ion-datetime id="expiry-datetime" presentation="date" :min="form.storeDate" v-model="form.expiryDate"></ion-datetime>
             </ion-modal>
           </ion-item>
+
           <!-- Food Unit Cost -->
-          <ion-item>
-            <ion-label position="stacked">Unit Cost</ion-label>
-            <ion-input type="number" v-model="form.cost"></ion-input>
+          <ion-item class="unit-cost-item">
+            <ion-input label="Unit Cost: " placeholder="0" label-placement="stacked" type="number" v-model="form.cost"></ion-input>
           </ion-item>
+
           <!-- Food Quantity -->
-          <ion-item>
-            <ion-label position="stacked">Quantity</ion-label>
-            <ion-input type="number" v-model="form.quantity"></ion-input>
+          <ion-item class="quantity-item">
+            <ion-input label="Quantity: " placeholder="0" label-placement="stacked" type="number" v-model="form.quantity"></ion-input>
           </ion-item>
+
           <!-- Unit Measurement -->
-          <ion-item>
+          <ion-item class="unit-measurement-item">
             <ion-label position="stacked">Unit Measurement</ion-label>
             <ion-select v-model="form.unit_measurement" interface="popover">
               <ion-select-option value="pieces">Pieces</ion-select-option>
@@ -62,6 +69,7 @@
             </ion-select>
           </ion-item>
 
+          <!-- Add button-->
           <ion-item>
             <ion-button type="submit" expand="block" :disabled="!form.name">Add</ion-button>
           </ion-item>
@@ -72,7 +80,7 @@
       <ion-label class="food-entries__filter-header">Filter By Food Type</ion-label>
       <ion-list>
         <ion-item v-for="filter in filterTypes" :key="filter.name">
-          <ion-checkbox label-placement="start" v-model="filter.checked">
+          <ion-checkbox label-placement="start" v-model="filter.checked" class="black-checkbox">
             {{ filter.name }}
           </ion-checkbox>
         </ion-item>
@@ -86,6 +94,7 @@
           @on-toggle="debounceArchiveToggle($event)"
           @on-delete="onDeleteEntry($event)"
           @on-edit="onEditEntry($event)"
+          class="food-entry-checkbox"
         />
       </ion-list>
 
@@ -97,6 +106,7 @@
           @on-toggle="debounceArchiveToggle($event)"
           @on-delete="onDeleteEntry($event)"
           @on-edit="onEditEntry($event)"
+          class="food-entry-checkbox"
         />
       </ion-list>
 
@@ -107,6 +117,15 @@
 </template>
 
 <style scoped lang="scss">
+  ion-button {
+    color: #f4f4f4;
+    background-color: #333531;
+    border-radius: 10px;
+  }
+  ion-title {
+    font-weight: bolder;
+  }
+
   .food-entries {
     &__date-item {
       --padding-start: 0;
@@ -122,8 +141,72 @@
       margin-top: 1rem;
       padding: 0 1rem;
       font-size: 1rem;
-      font-weight: bold;
+      font-weight: bolder;
     }
+  }
+
+  .description-item ion-input,
+  .unit-cost-item ion-input,
+  .quantity-item ion-input {
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .unit-measurement-item {
+    --padding-start: 0.5rem;
+    --padding-end: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  ion-item {
+    --inner-padding: 0.5rem 0;
+    --highlight-background: transparent;
+  }
+
+  ion-label {
+    margin-bottom: 0.25rem;
+  }
+
+  .unit-measurement-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1rem;
+  }
+
+  .unit-measurement-item ion-label {
+    margin-bottom: 0.5rem;
+  }
+
+  .unit-measurement-item ion-select {
+    width: 100%;
+    --height: 44px; /* Adjust the height to match other inputs */
+    --padding-start: 0;
+    --padding-end: 0;
+    --padding-top: 0;
+    --padding-bottom: 0;
+    line-height: normal; /* Ensure text is vertically centered */
+  }
+
+  .black-checkbox {
+    --background: #5e823b;
+    --border-color: #5e823b;
+    --checkmark-color: white;
+    --size: 15px; /* Adjust size if needed */
+    color: #405729 !important;
+    font-weight: lighter;
+  }
+
+  .food-entry-checkbox {
+    --background: #405729;
+    --border-color: #405729;
+    --checkmark-color: white;
+    --size: 20px; /* Adjust size if needed */
+  }
+
+  .tabText {
+    color: #000000 !important;
   }
 </style>
 
