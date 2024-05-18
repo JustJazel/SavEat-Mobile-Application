@@ -21,13 +21,13 @@
 
           <div class="login__form-submit ion-text-center">
             <ion-button type="submit" fill="solid">Login</ion-button>
-            <router-link to="/register">
-              <a>New User? Register here</a>
+            <router-link to="/register" style="color: blue">
+              <a style="color: blue">New User? Register here</a>
             </router-link>
           </div>
           <ion-label class="login__form-submit ion-text-center">
             Need help with your account? contact:
-            <a href="mailto:saveatapp@gmail.com">saveatapp@gmail.com</a>
+            <a href="mailto:saveatapp@gmail.com" style="color: blue">saveatapp@gmail.com</a>
           </ion-label>
         </form>
       </ion-list>

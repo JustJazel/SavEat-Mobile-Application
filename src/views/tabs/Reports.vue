@@ -3,14 +3,19 @@
     <ion-header>
       <ion-toolbar>
         <ion-title>{{ Tabs.REPORTS }}</ion-title>
+        <ion-item slot="end">
+          <ion-button>
+            <ion-icon class="black-icon" name="notifications-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
       </ion-toolbar>
 
       <!-- Segment Area-->
       <ion-segment v-model="selectedSegment">
-        <ion-segment-button value="usageReport">
+        <ion-segment-button value="usageReport" class="usage-report-button">
           <ion-label>Usage Report</ion-label>
         </ion-segment-button>
-        <ion-segment-button value="restockReport">
+        <ion-segment-button value="restockReport" class="restock-report-button">
           <ion-label>Restock Report</ion-label>
         </ion-segment-button>
       </ion-segment>
@@ -20,34 +25,29 @@
       <!-- Usage Report Form Template -->
       <div v-if="selectedSegment === 'usageReport'">
         <form @submit.prevent="onAddFoodEntry">
-          <!--TO DO: update function-->
           <ion-list>
-            <!-- Usage Report Date-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Usage Report Date -->
             <ion-item class="food-entries__date-item">
               <ion-label :position="'stacked'">Usage Report Date</ion-label>
-              <ion-datetime-button id="store-date-button" datetime="store-datetime"></ion-datetime-button>
+              <ion-datetime-button id="usage-date-button" datetime="usage-datetime"></ion-datetime-button>
               <ion-modal :keep-contents-mounted="true">
-                <ion-datetime id="store-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
+                <ion-datetime id="usage-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
               </ion-modal>
             </ion-item>
 
-            <!-- Food input-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Food input -->
             <ion-item>
               <ion-label position="stacked">Food:</ion-label>
               <ion-input type="text" v-model="form.food_description"></ion-input>
             </ion-item>
 
-            <!-- Amount Used-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Amount Used -->
             <ion-item>
               <ion-label position="stacked">Amount Used:</ion-label>
               <ion-input type="number" v-model="form.quantity"></ion-input>
             </ion-item>
 
             <!-- Unit Measurement -->
-            <!--TO DO: update naming conventions and function-->
             <ion-item>
               <ion-label position="stacked">Unit Measurement</ion-label>
               <ion-select v-model="form.unit_measurement" interface="popover">
@@ -93,36 +93,30 @@
 
       <!-- Restock Report Template -->
       <div v-if="selectedSegment === 'restockReport'">
-        <!-- Add your Restock Report form and logic here -->
         <form @submit.prevent="onAddFoodEntry">
-          <!--TO DO: update function-->
           <ion-list>
-            <!-- Usage Report Date-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Restock Report Date -->
             <ion-item class="food-entries__date-item">
               <ion-label :position="'stacked'">Restock Report Date</ion-label>
-              <ion-datetime-button id="store-date-button" datetime="store-datetime"></ion-datetime-button>
+              <ion-datetime-button id="restock-date-button" datetime="restock-datetime"></ion-datetime-button>
               <ion-modal :keep-contents-mounted="true">
-                <ion-datetime id="store-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
+                <ion-datetime id="restock-datetime" presentation="date" v-model="form.storeDate"></ion-datetime>
               </ion-modal>
             </ion-item>
 
-            <!-- Food input-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Food input -->
             <ion-item>
               <ion-label position="stacked">Food:</ion-label>
               <ion-input type="text" v-model="form.food_description"></ion-input>
             </ion-item>
 
-            <!-- Amount Used-->
-            <!--TO DO: update naming conventions and function-->
+            <!-- Amount Used -->
             <ion-item>
               <ion-label position="stacked">Amount Used:</ion-label>
               <ion-input type="number" v-model="form.quantity"></ion-input>
             </ion-item>
 
             <!-- Unit Measurement -->
-            <!--TO DO: update naming conventions and function-->
             <ion-item>
               <ion-label position="stacked">Unit Measurement</ion-label>
               <ion-select v-model="form.unit_measurement" interface="popover">
@@ -132,6 +126,12 @@
                 <ion-select-option value="l">L</ion-select-option>
                 <ion-select-option value="g">G</ion-select-option>
               </ion-select>
+            </ion-item>
+
+            <!-- Total Cost -->
+            <ion-item>
+              <ion-label position="stacked">Total Cost:</ion-label>
+              <ion-input type="number" v-model="form.quantity"></ion-input>
             </ion-item>
 
             <ion-item>
@@ -170,6 +170,10 @@
 </template>
 
 <style scoped lang="scss">
+  .black-icon {
+    color: black !important;
+  }
+
   .food-entries {
     &__date-item {
       --padding-start: 0;
@@ -188,9 +192,35 @@
       font-weight: bold;
     }
   }
+
+  /* Custom styles for the Restock Report segment button */
+  ion-segment-button.restock-report-button {
+    color: #59655a !important;
+  }
+
+  ion-segment-button.restock-report-button.segment-button-checked {
+    color: #333531 !important; /* Optional: Change the text color when selected */
+    background-color: #948f86 !important; /* Change background color when selected */
+  }
+
+  ion-segment-button.usage-report-button {
+    color: #59655a !important;
+  }
+
+  ion-segment-button.usage-report-button.segment-button-checked {
+    color: #333531 !important; /* Optional: Change the text color when selected */
+    background-color: #8f9486 !important; /* Change background color when selected */
+  }
+
+  .segment-button-checked {
+    background-color: #8f9486 !important;
+    color: #333531 !important; /* Optional: Change the text color when selected */
+  }
 </style>
 
 <script setup lang="ts">
+  import 'ionicons';
+
   import {
     IonPage,
     IonHeader,
@@ -211,6 +241,7 @@
     IonSelectOption,
     IonSegment,
     IonSegmentButton,
+    IonIcon,
   } from '@ionic/vue';
   import { Ref, reactive, ref, computed } from 'vue';
   import { initFoodEntries } from '../../supabase';
@@ -219,6 +250,7 @@
   import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../../services';
   import FoodTypePicker from '../../components/FoodTypePicker.vue';
   import FoodEntryItem from '../../components/FoodEntryItem.vue';
+  import { notifications } from 'ionicons/icons';
 
   const userStore = useUserStore();
 
