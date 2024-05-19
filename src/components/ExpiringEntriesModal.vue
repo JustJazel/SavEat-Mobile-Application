@@ -4,16 +4,17 @@
       <ion-buttons slot="start">
         <ion-button color="black" @click="cancel">Cancel</ion-button>
       </ion-buttons>
-      <ion-title>Expiring Food Entries</ion-title>
+      <ion-title>Expiring / Low Stocks</ion-title>
       <ion-buttons slot="end">
         <ion-button @click="confirm" :strong="true">Confirm</ion-button>
       </ion-buttons>
     </ion-toolbar>
   </ion-header>
   <ion-content class="ion-padding">
-    <ion-list class="food-entries__list" v-if="userStore.getExpiringFoodEntries.length">
+    <ion-list class="food-entries__list" v-if="filteredFoodEntries.length">
       <FoodEntryItem
-        v-for="entry in userStore.getExpiringFoodEntries"
+        v-for="entry in filteredFoodEntries"
+        :key="entry.id"
         :entry="entry"
         @on-toggle="debounceArchiveToggle($event)"
         @on-delete="onDeleteEntry($event)"
@@ -25,7 +26,7 @@
 
 <script lang="ts" setup>
   import { IonContent, IonHeader, IonTitle, IonToolbar, IonButtons, IonButton, modalController, IonList } from '@ionic/vue';
-
+  import { computed } from 'vue';
   import { useUserStore } from '../store';
   import { debounceArchiveToggle, onDeleteEntry, onEditEntry } from '../services';
   import FoodEntryItem from './FoodEntryItem.vue';
@@ -34,4 +35,12 @@
 
   const cancel = () => modalController.dismiss(null, 'cancel');
   const confirm = () => modalController.dismiss(null, 'confirm');
+
+  const filteredFoodEntries = computed(() => {
+    const currentDate = new Date();
+    return userStore.getExpiringFoodEntries.filter((entry) => {
+      const expiryDate = new Date(entry.expiryDate);
+      return expiryDate <= currentDate || entry.quantity < 20;
+    });
+  });
 </script>

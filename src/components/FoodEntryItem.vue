@@ -11,7 +11,8 @@
         <h2>{{ capitalize(entry.name) }}</h2>
         <p>{{ capitalize(entry.type) }}</p>
         <p>Stored: {{ formatDate(entry.storeDate) }}</p>
-        <p>Expires: {{ formatDate(entry.expiryDate) }}</p>
+        <p v-if="isExpiring(entry)">Expires: {{ formatDate(entry.expiryDate) }}</p>
+        <p v-if="entry.quantity < 20">Quantity: {{ entry.quantity }}</p>
       </ion-label>
       <!--Arrow build here-->
       <ion-icon size="medium" color="black" :icon="arrowForwardOutline"></ion-icon>
@@ -67,6 +68,12 @@
       default:
         break;
     }
+  }
+
+  function isExpiring(entry: { expiryDate: string | number | Date }) {
+    const currentDate = new Date();
+    const expiryDate = new Date(entry.expiryDate);
+    return expiryDate <= currentDate;
   }
 </script>
 
