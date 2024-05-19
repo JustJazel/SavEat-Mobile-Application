@@ -85,7 +85,7 @@
   import { notificationsOutline, createOutline, exitOutline, personCircleOutline } from 'ionicons/icons';
   import { TAB_ROUTES } from './tabs/tabs.model';
   import { supabase } from '../supabase';
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { useIonRouter } from '@ionic/vue';
   import { useUserStore } from '../store';
   import { useRouter } from 'vue-router';
@@ -129,6 +129,27 @@
     const tabName = tabs.includes(event.tab) ? event.tab : 'Menu';
     pageTitle.value = tabName;
   };
+
+  const applyTheme = () => {
+    const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const tabTextElements = document.querySelectorAll<HTMLElement>('.tabText');
+
+    if (darkMode) {
+      tabTextElements.forEach((element) => {
+        element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--tab-text-dark');
+      });
+    } else {
+      tabTextElements.forEach((element) => {
+        element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--tab-text-light');
+      });
+    }
+  };
+
+  onMounted(() => {
+    applyTheme();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  });
 </script>
 
 <style scoped lang="scss">
@@ -153,7 +174,7 @@
   }
 
   .tabText {
-    color: #273126 !important;
+    color: var(--tab-text-light) !important;
   }
 
   ion-icon {

@@ -8,7 +8,7 @@
     <ion-content>
       <ion-list :inset="true">
         <div class="login__logo">
-          <img src="@assets/images/LogoSaveat.png" alt="logo" />
+          <img src="@assets/images/LogoSav.png" alt="logo" />
         </div>
         <form @submit.prevent="login" class="login__form">
           <ion-item>

@@ -5,6 +5,7 @@
         <ion-buttons slot="start">
           <ion-back-button @click="goBack"></ion-back-button>
         </ion-buttons>
+        <ion-title>Edit Profile</ion-title>
       </ion-toolbar>
 
       <!-- Cover Photo -->
@@ -87,6 +88,7 @@
   import { supabase } from '../supabase';
   import { useUserStore, IUser } from '../store';
   import { personCircleOutline } from 'ionicons/icons';
+  import { Tabs } from '../models/constants';
 
   const userStore = useUserStore();
   const router = useIonRouter();

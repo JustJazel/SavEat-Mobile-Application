@@ -272,23 +272,25 @@
 
   // Segment button styles
   ion-segment-button.restock-report-button {
-    color: #59655a !important;
+    color: #97a48d !important;
     background-color: #d3d8ca;
   }
 
+  //#d3d8ca;
+  //#aebf8f;
   ion-segment-button.usage-report-button {
-    color: #59655a !important;
+    color: #97a48d !important;
     background-color: #d3d8ca;
   }
 
   ion-segment-button.restock-report-button.segment-button-checked {
     color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #aebf8f !important; /* Change background color when selected */
+    background-color: #d3d8ca !important; /* Change background color when selected */
   }
 
   ion-segment-button.usage-report-button.segment-button-checked {
     color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #aebf8f !important; /* Change background color when selected */
+    background-color: #d3d8ca !important; /* Change background color when selected */
   }
 
   .segment-button-checked {
