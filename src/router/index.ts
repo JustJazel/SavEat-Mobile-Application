@@ -2,16 +2,34 @@ import { createRouter, createWebHistory } from '@ionic/vue-router';
 import { NavigationGuardNext, RouteRecordRaw } from 'vue-router';
 import { useUserStore } from '../store';
 import { toastController } from '@ionic/vue';
+import HomePage from '../views/HomePage.vue';
+import InventoryPage from '../views/InventoryPage.vue';
+import ItemPage from '../views/ItemPage.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/login',
+    redirect: '/home',
   },
   {
     path: '/login',
     meta: { requiresAuth: false },
     component: () => import('../views/Login.vue'),
+  },
+  {
+    path: '/home',
+    name: 'Home',
+    component: HomePage,
+  },
+  {
+    path: '/inventory',
+    name: 'Inventory',
+    component: InventoryPage,
+  },
+  {
+    path: '/item/', //add /:id to get the id of the item
+    name: 'Item',
+    component: ItemPage,
   },
   {
     path: '/register',
