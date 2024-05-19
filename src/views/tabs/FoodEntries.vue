@@ -61,7 +61,7 @@
           <ion-item class="unit-measurement-item">
             <ion-label position="stacked">Unit Measurement</ion-label>
             <ion-select v-model="form.unit_measurement" interface="popover">
-              <ion-select-option value="pieces">Pieces</ion-select-option>
+              <ion-select-option value="pieces">Pc</ion-select-option>
               <ion-select-option value="kg">Kg</ion-select-option>
               <ion-select-option value="ml">Ml</ion-select-option>
               <ion-select-option value="l">L</ion-select-option>

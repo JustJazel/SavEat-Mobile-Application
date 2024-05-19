@@ -327,19 +327,18 @@
   import { initFoodEntries, updateFoodEntry, insertUsageReport, insertRestockReport, supabase } from '../../supabase';
   import { useUserStore } from '../../store';
   import { Tabs, IUsageReportForm, IRestockReportForm } from '../../models';
-  import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../../services';
-  import FoodTypePicker from '../../components/FoodTypePicker.vue';
-  import FoodEntryItem from '../../components/FoodEntryItem.vue';
   import { notifications } from 'ionicons/icons';
 
   interface UsageReport {
     usage_id: string;
     report_date: string;
+    auth_user_id: string;
   }
 
   interface RestockReport {
     restock_id: string;
     restock_date: string;
+    auth_user_id: string;
   }
 
   interface ReportDetail {
@@ -397,11 +396,13 @@
   const restockReportDetails = ref<RestockDetail[]>([]);
   const isModalOpen = ref(false);
   const isRestockModalOpen = ref(false);
+  const currentUser = ref(null);
 
-  onIonViewDidEnter(() => {
-    initFoodEntries();
-    fetchUniqueUsageReports();
-    fetchUniqueRestockReports();
+  onIonViewDidEnter(async () => {
+    await initFoodEntries();
+    await fetchUniqueUsageReports();
+    await fetchUniqueRestockReports();
+    currentUser.value = await getCurrentUser();
   });
 
   const filteredFoodEntries = computed(() => {
@@ -439,7 +440,12 @@
   };
 
   const fetchUniqueUsageReports = async () => {
-    const { data, error } = await supabase.from('usage_report').select('usage_id, report_date').order('report_date', { ascending: false });
+    const user = await getCurrentUser();
+    const { data, error } = await supabase
+      .from('usage_report')
+      .select('usage_id, report_date, auth_user_id')
+      .eq('auth_user_id', user.id)
+      .order('report_date', { ascending: false });
 
     if (error) {
       console.error('Error fetching usage reports:', error);
@@ -458,9 +464,11 @@
   };
 
   const fetchUniqueRestockReports = async () => {
+    const user = await getCurrentUser();
     const { data, error } = await supabase
       .from('restock_report')
-      .select('restock_id, restock_date')
+      .select('restock_id, restock_date, auth_user_id')
+      .eq('auth_user_id', user.id)
       .order('restock_date', { ascending: false });
 
     if (error) {

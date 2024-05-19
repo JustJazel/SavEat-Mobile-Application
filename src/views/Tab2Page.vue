@@ -10,25 +10,9 @@
       <div class="container">
         <!-- Shiny new search bar with an input field -->
         <div class="search-bar">
-          <!-- <input
-            class="search-box"
-            v-model="searchTerm"
-            placeholder="Search food entry by name..."
-            style="width: 100%; height: 50px; background-color: rgb(115, 209, 156); border: 3px solid #1e5a33"
-          /> -->
-
           <ion-toolbar>
             <ion-searchbar v-model="searchTerm" placeholder="Enter recipe or ingredient" slot="start"></ion-searchbar>
           </ion-toolbar>
-
-          <!--    <p>
-            <ion-checkbox></ion-checkbox>
-            Used
-            <ion-checkbox></ion-checkbox>
-            Perishable
-            <ion-checkbox></ion-checkbox>
-            Processed
-          </p>-->
         </div>
 
         <div class="food-entries-list">
@@ -41,6 +25,8 @@
                     <div style="flex: 1">
                       <h2>{{ capitalize(entry.name) }}</h2>
                       <p>{{ capitalize(entry.type) }}</p>
+                      <p>Quantity: {{ entry.quantity }} {{ entry.unit_measurement }}</p>
+                      <p>Unit Cost: ₱{{ entry.cost }}</p>
                     </div>
                     <div>
                       <p>Stored: {{ formatDate(entry.store_date) }}</p>
@@ -62,15 +48,24 @@
 </template>
 
 <script setup lang="ts">
-  import { ref, computed, Ref, watch, onMounted } from 'vue';
-  import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonGrid, IonRow, IonCol, IonButton, IonItemSliding } from '@ionic/vue';
+  import { ref, computed, onMounted } from 'vue';
+  import {
+    IonPage,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonItemSliding,
+    IonSearchbar,
+    IonIcon,
+    IonList,
+    IonItem,
+    IonLabel,
+  } from '@ionic/vue';
   import { Tabs } from '../models/constants';
   import { createClient } from '@supabase/supabase-js';
   import { fastFoodOutline } from 'ionicons/icons';
-  import { capitalize } from 'vue';
-
-  const showProcessed: Ref<boolean> = ref(false);
-  const showPerishable: Ref<boolean> = ref(false);
+  import { capitalize } from 'lodash';
 
   interface FoodEntry {
     id: number;
@@ -78,19 +73,22 @@
     type: string;
     store_date: string;
     expiry_date: string;
+    quantity: number;
+    unit_measurement: string;
+    cost: number;
   }
 
-  const supabaseUrl = 'https://xcspnnmswynkoibswxyw.supabase.co';
+  const supabaseUrl = 'https://ymyyzgnwopjgsaitbpmn.supabase.co';
   const supabaseKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inhjc3Bubm1zd3lua29pYnN3eHl3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDA1ODQxNjQsImV4cCI6MjAxNjE2MDE2NH0.ho4mMmPxIheFu4QoE5f_hg4E69af-cCQL41QsAAb1R4';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteXl6Z253b3BqZ3NhaXRicG1uIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTcxNDc0ODY2OCwiZXhwIjoyMDMwMzI0NjY4fQ.Kzfosz6YLt1QcjsvgpgvFDJZ0t93StjKUe5_i0XaixU';
 
   const supabase = createClient(supabaseUrl, supabaseKey);
 
-  const data: Ref<FoodEntry[]> = ref([]);
+  const data = ref<FoodEntry[]>([]);
   const searchTerm = ref('');
 
-  const loading: Ref<boolean> = ref(false);
-  const error: Ref<string | null> = ref('');
+  const loading = ref<boolean>(false);
+  const error = ref<string | null>(null);
 
   const formatDate = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -102,55 +100,37 @@
       loading.value = true;
       error.value = null;
 
-      const query = supabase.from('food_entries').select();
-
-      if (searchTerm.value.trim()) {
-        query.ilike('name', `%${searchTerm.value.trim().toLowerCase()}%`);
-      }
-
-      const { data: searchDataResult, error: searchError } = await query;
-
-      console.log('Search Data:', searchDataResult);
+      const { data: searchDataResult, error: searchError } = await supabase.from('food_entries').select();
 
       if (searchError) {
-        console.error('Error searching in the database:', searchError.message);
-        error.value = 'An error occurred while searching.';
+        console.error('Error fetching food entries from the database:', searchError.message);
+        error.value = 'An error occurred while fetching data.';
       } else {
         data.value = searchDataResult || [];
       }
     } catch (error: any) {
-      console.error('Error searching in the database:', error.message);
+      console.error('Error fetching food entries from the database:', error.message);
       error.value = 'An unexpected error occurred.';
     } finally {
       loading.value = false;
-      console.log('Search Complete');
     }
   };
-
-  watch(searchTerm, () => {
-    fetchFoodData();
-  });
-
-  const filteredData = computed(() => {
-    const lowerSearchText = searchTerm.value.trim().toLowerCase();
-
-    if (!lowerSearchText) {
-      return data.value.filter(
-        (item: FoodEntry) =>
-          (showProcessed.value ? item.type.toLowerCase() === 'processed' : true) &&
-          (showPerishable.value ? item.type.toLowerCase() === 'perishable' : true),
-      );
-    }
-
-    return data.value.filter(
-      (item: FoodEntry) =>
-        item.name.toLowerCase().includes(lowerSearchText) &&
-        (showProcessed.value ? item.type.toLowerCase() === 'processed' : true) &&
-        (showPerishable.value ? item.type.toLowerCase() === 'perishable' : true),
-    );
-  });
 
   onMounted(() => {
     fetchFoodData();
   });
+
+  const filteredData = computed(() => {
+    if (!searchTerm.value.trim()) {
+      return data.value;
+    }
+    const lowerSearchText = searchTerm.value.trim().toLowerCase();
+    return data.value.filter((item: FoodEntry) => item.name.toLowerCase().includes(lowerSearchText));
+  });
 </script>
+
+<style scoped lang="scss">
+  .colorText {
+    color: #333531;
+  }
+</style>
