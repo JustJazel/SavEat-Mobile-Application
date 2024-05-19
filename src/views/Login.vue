@@ -8,7 +8,7 @@
     <ion-content>
       <ion-list :inset="true">
         <div class="login__logo">
-          <img src="@assets/images/saveatLogo.png" alt="logo" />
+          <img src="@assets/images/LogoSav.png" alt="logo" />
         </div>
         <form @submit.prevent="login" class="login__form">
           <ion-item>
@@ -21,13 +21,13 @@
 
           <div class="login__form-submit ion-text-center">
             <ion-button type="submit" fill="solid">Login</ion-button>
-            <router-link to="/register">
-              <a>New User? Signup Here</a>
+            <router-link to="/register" style="color: blue">
+              <a style="color: blue">New User? Register here</a>
             </router-link>
           </div>
           <ion-label class="login__form-submit ion-text-center">
             Need help with your account? contact:
-            <a href="mailto:saveatapp@gmail.com">saveatapp@gmail.com</a>
+            <a href="mailto:saveatapp@gmail.com" style="color: blue">saveatapp@gmail.com</a>
           </ion-label>
         </form>
       </ion-list>
@@ -44,7 +44,7 @@
       max-width: 400px;
 
       img {
-        max-width: 100%;
+        max-width: 30%;
         object-fit: contain;
         width: 100%;
       }

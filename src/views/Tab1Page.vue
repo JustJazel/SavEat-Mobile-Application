@@ -34,6 +34,11 @@
           <ion-label position="fixed">Food Name:</ion-label>
           <ion-input v-model="newEntry.foodName" placeholder="Enter food name here"></ion-input>
         </ion-item>
+        <!-- This is food name item-->
+        <ion-item>
+          <ion-label position="fixed">Food Description:</ion-label>
+          <ion-input v-model="newEntry.foodName" placeholder="Enter food description"></ion-input>
+        </ion-item>
         <!-- This is type item -->
         <ion-item>
           <ion-label position="fixed">Food Type:</ion-label>
@@ -51,6 +56,16 @@
         <ion-item>
           <ion-label position="fixed">Expire Date:</ion-label>
           <ion-input v-model="newEntry.expireDate" type="date" placeholder="Select Date"></ion-input>
+        </ion-item>
+        <!-- This is quantity item -->
+        <ion-item>
+          <ion-label position="fixed">Quantity:</ion-label>
+          <ion-input v-model="newEntry.quantity" type="number" placeholder="Enter quantity"></ion-input>
+        </ion-item>
+        <!-- This is unit cost item -->
+        <ion-item>
+          <ion-label position="fixed">Unit Cost:</ion-label>
+          <ion-input v-model="newEntry.cost" type="number" placeholder="Enter unit cost"></ion-input>
         </ion-item>
         <!-- This is add item -->
         <ion-item><ion-button @click="addEntry" slot="end">Add</ion-button></ion-item>
@@ -120,9 +135,9 @@
   import { defineComponent } from 'vue';
   import { personOutline } from 'ionicons/icons';
 
-  const supabaseUrl = 'https://nzvvuhyqztnxwnwnrbpk.supabase.co';
+  const supabaseUrl = 'https://ymyyzgnwopjgsaitbpmn.supabase.co';
   const supabaseKey =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im56dnZ1aHlxenRueHdud25yYnBrIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczODAyMTksImV4cCI6MjAxMjk1NjIxOX0.rFywbICuv1es8aU7xGRALFhyOrxhTr6r62bxMaR2ads';
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlteXl6Z253b3BqZ3NhaXRicG1uIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTQ3NDg2NjgsImV4cCI6MjAzMDMyNDY2OH0.NPTLBrmmUgBTStKSPEwRm-aPxSkWGo1euwtFob16QzQ';
   const supabase = createClient(supabaseUrl, supabaseKey);
 
   interface FoodEntry {
@@ -130,6 +145,9 @@
     foodType: string;
     storeDate: string;
     expireDate: string;
+    quantity: number;
+    cost: number;
+    foodDescription: string;
   }
 
   const newEntry: FoodEntry = {
@@ -137,6 +155,9 @@
     foodType: '',
     storeDate: '',
     expireDate: '',
+    quantity: 0,
+    cost: 0,
+    foodDescription: '',
   };
 
   const foodEntries = ref<Array<FoodEntry>>([]);
@@ -156,6 +177,9 @@
       newEntry.foodType = '';
       newEntry.storeDate = '';
       newEntry.expireDate = '';
+      newEntry.quantity = 0;
+      newEntry.cost = 0;
+      newEntry.foodDescription = '';
     }
   };
 
@@ -193,4 +217,5 @@
       console.error('Error deleting entry from Supabase:', error);
     }
   };
+  //goodbye world!
 </script>

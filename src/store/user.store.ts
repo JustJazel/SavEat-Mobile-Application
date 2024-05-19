@@ -1,5 +1,10 @@
-import { IFoodEntry } from '../models';
-import { deleteFoodEntry as deleteEntry, insertFoodEntry as insertEntry, updateFoodEntry as updateEntry } from '../supabase';
+import { IFoodEntry, IUsageReportForm } from '../models';
+import {
+  deleteFoodEntry as deleteEntry,
+  insertFoodEntry as insertEntry,
+  updateFoodEntry as updateEntry,
+  insertUsageReport as insertReport,
+} from '../supabase';
 import { format, isAfter, isEqual } from 'date-fns';
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
@@ -17,6 +22,7 @@ interface State {
   foodEntries: IFoodEntry[];
   selectedFoodEntry: IFoodEntry | null;
   expiringFoodEntries: IFoodEntry[];
+  usageReports: IUsageReportForm[]; // Add this line
 }
 
 export const useUserStore = defineStore('userStore', {
@@ -25,6 +31,7 @@ export const useUserStore = defineStore('userStore', {
     foodEntries: [],
     selectedFoodEntry: null,
     expiringFoodEntries: [],
+    usageReports: [],
   }),
   getters: {
     getUser(): IUser | null {
@@ -62,10 +69,9 @@ export const useUserStore = defineStore('userStore', {
       const today = new Date();
       const filteredEntries = this.foodEntries.filter((entry) => {
         const expiryDate = parseISO(entry.expiryDate);
-        const offsetExpiryDate = addDays(today, +3);
+        const offsetExpiryDate = addDays(today, 3);
 
-        const res = isAfter(offsetExpiryDate, expiryDate) || isEqual(offsetExpiryDate, expiryDate);
-        return res;
+        return isAfter(offsetExpiryDate, expiryDate) || isEqual(offsetExpiryDate, expiryDate);
       });
 
       this.expiringFoodEntries = filteredEntries;
@@ -112,6 +118,19 @@ export const useUserStore = defineStore('userStore', {
       this.foodEntries = this.foodEntries.filter((entry) => entry.id !== foodEntry.id);
 
       return res;
+    },
+    async updateFoodEntryQuantity(foodEntryId: string, newQuantity: number): Promise<void> {
+      const foodEntry = this.foodEntries.find((entry) => entry.id === foodEntryId);
+      if (foodEntry) {
+        foodEntry.quantity = newQuantity;
+        await this.updateFoodEntry(foodEntry);
+      }
+    },
+    async addUsageReport(usageReport: IUsageReportForm): Promise<void> {
+      const res = await insertReport(usageReport);
+      if (res) {
+        this.usageReports.push(usageReport);
+      }
     },
   },
 });

@@ -2,7 +2,7 @@
   <ion-header>
     <ion-toolbar>
       <ion-buttons slot="start">
-        <ion-button color="medium" @click="cancel">Cancel</ion-button>
+        <ion-button color="black" @click="cancel">Cancel</ion-button>
       </ion-buttons>
       <ion-title>Edit Food Entry</ion-title>
       <ion-buttons slot="end">
@@ -44,6 +44,32 @@
           ></ion-datetime>
         </ion-modal>
       </ion-item>
+      <!-- Food Description -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Description</ion-label>
+        <ion-input type="text" v-model="props.form.food_description"></ion-input>
+      </ion-item>
+      <!-- Food Quantity -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Quantity</ion-label>
+        <ion-input type="number" v-model="props.form.quantity"></ion-input>
+      </ion-item>
+      <!-- Food Cost -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Cost</ion-label>
+        <ion-input type="number" v-model="props.form.cost"></ion-input>
+      </ion-item>
+      <!-- Unit Measurement -->
+      <ion-item :disabled="props.form.isArchived">
+        <ion-label position="stacked">Unit Measurement</ion-label>
+        <ion-select v-model="props.form.unit_measurement" interface="popover">
+          <ion-select-option value="pieces">Pieces</ion-select-option>
+          <ion-select-option value="kg">Kg</ion-select-option>
+          <ion-select-option value="ml">Ml</ion-select-option>
+          <ion-select-option value="l">L</ion-select-option>
+          <ion-select-option value="g">G</ion-select-option>
+        </ion-select>
+      </ion-item>
       <ion-item>
         <ion-label>Archived</ion-label>
         <ion-checkbox v-model="props.form.isArchived" label-placement="start"></ion-checkbox>
@@ -69,6 +95,8 @@
     IonDatetime,
     IonDatetimeButton,
     IonCheckbox,
+    IonSelect,
+    IonSelectOption,
   } from '@ionic/vue';
   import { FoodEntryType } from '../models';
   import FoodTypePicker from './FoodTypePicker.vue';

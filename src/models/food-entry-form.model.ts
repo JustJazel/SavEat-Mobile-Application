@@ -6,4 +6,11 @@ export interface IFoodEntryForm {
   storeDate: string;
   expiryDate: string;
   isArchived: boolean;
+  quantity: number;
+  cost: number;
+  food_description: string;
+  unit_measurement: string;
+
+  food_usage: number;
+  usage_notes: string;
 }

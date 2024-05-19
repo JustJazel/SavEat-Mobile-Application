@@ -10,12 +10,16 @@
       <div class="container">
         <!-- Shiny new search bar with an input field -->
         <div class="search-bar">
-          <input
+          <!-- <input
             class="search-box"
             v-model="searchTerm"
             placeholder="Search food entry by name..."
             style="width: 100%; height: 50px; background-color: rgb(115, 209, 156); border: 3px solid #1e5a33"
-          />
+          /> -->
+
+          <ion-toolbar>
+            <ion-searchbar v-model="searchTerm" placeholder="Enter recipe or ingredient" slot="start"></ion-searchbar>
+          </ion-toolbar>
 
           <!--    <p>
             <ion-checkbox></ion-checkbox>

@@ -1,49 +1,57 @@
 <template>
   <ion-page>
-    <ion-menu content-id="main-content" menu-id="main-menu" side="end">
+    <ion-menu content-id="main-content" menu-id="main-menu" side="start">
       <ion-header>
         <ion-toolbar>
-          <ion-title>Hello, {{ `${userStore.getUser?.firstName}` ?? 'Guest' }}!</ion-title>
+          <ion-title class="tabText" style="display: flex; align-items: center">
+            <ion-icon size="Large" :icon="personCircleOutline"></ion-icon>
+            Hello, {{ `${userStore.getUser?.firstName}` ?? 'Guest' }}!
+          </ion-title>
         </ion-toolbar>
       </ion-header>
       <ion-content class="ion-padding">
         <ion-list>
-          <!--Account Details-->
+          <!-- Account Details -->
           <ion-item v-if="userStore.getUser">
             <ion-label>Account</ion-label>
             <ion-text>{{ userStore.getUserFullName }}</ion-text>
           </ion-item>
 
-          <!--Edit Profile Details-->
-          <ion-item>
+          <!-- Edit Profile Details -->
+          <ion-item v-ripple>
             <ion-label>Edit Profile</ion-label>
-            <ion-button color="warning" @click="goToEditProfile">Edit</ion-button>
-          </ion-item>
-
-          <!--Logout To Saveat-->
-          <ion-item>
-            <ion-label>Logout</ion-label>
-            <ion-button color="danger" @click="logout">Logout</ion-button>
+            <ion-icon class="black-icon" size="Large" :icon="createOutline" @click="goToEditProfile"></ion-icon>
           </ion-item>
         </ion-list>
+
+        <!-- Logout -->
+        <ion-item class="logout-item" v-ripple @click="logout">
+          <ion-label>Logout</ion-label>
+          <ion-icon class="black-icon" size="Large" :icon="exitOutline"></ion-icon>
+        </ion-item>
       </ion-content>
     </ion-menu>
 
     <ion-content id="main-content">
       <ion-header>
         <ion-toolbar>
-          <ion-buttons slot="end">
+          <ion-buttons class="tabText" slot="start">
             <ion-menu-button></ion-menu-button>
           </ion-buttons>
-          <ion-title>{{ pageTitle }}</ion-title>
+          <ion-title class="tabText">{{ pageTitle }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button>
+              <ion-icon class="tabText" :icon="notificationsOutline"></ion-icon>
+            </ion-button>
+          </ion-buttons>
         </ion-toolbar>
       </ion-header>
 
-      <ion-tabs :onIonTabsDidChange="handleTabChange">
+      <ion-tabs @ionTabsDidChange="handleTabChange">
         <ion-router-outlet></ion-router-outlet>
         <ion-tab-bar slot="bottom" id="navigation-tabs">
-          <ion-tab-button v-for="tab of TAB_ROUTES" :tab="tab.name" :href="tab.path">
-            <ion-icon aria-hidden="true" :icon="tab.icon" />
+          <ion-tab-button v-for="tab in TAB_ROUTES" :key="tab.name" :tab="tab.name" :href="tab.path">
+            <ion-icon :icon="tab.icon" aria-hidden="true"></ion-icon>
             <ion-label>{{ tab.name }}</ion-label>
           </ion-tab-button>
         </ion-tab-bar>
@@ -71,12 +79,13 @@
     IonList,
     IonItem,
     IonButton,
-    menuController,
     IonText,
+    menuController,
   } from '@ionic/vue';
+  import { notificationsOutline, createOutline, exitOutline, personCircleOutline } from 'ionicons/icons';
   import { TAB_ROUTES } from './tabs/tabs.model';
   import { supabase } from '../supabase';
-  import { ref } from 'vue';
+  import { ref, onMounted } from 'vue';
   import { useIonRouter } from '@ionic/vue';
   import { useUserStore } from '../store';
   import { useRouter } from 'vue-router';
@@ -107,7 +116,6 @@
   async function goToEditProfile() {
     try {
       console.log('Navigating to Edit Profile');
-      // Use a relative path to navigate to the "edit-profile" route
       await router.push('/edit-profile');
     } catch (error) {
       console.error('Navigation error:', error);
@@ -121,4 +129,72 @@
     const tabName = tabs.includes(event.tab) ? event.tab : 'Menu';
     pageTitle.value = tabName;
   };
+
+  const applyTheme = () => {
+    const darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const tabTextElements = document.querySelectorAll<HTMLElement>('.tabText');
+
+    if (darkMode) {
+      tabTextElements.forEach((element) => {
+        element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--tab-text-dark');
+      });
+    } else {
+      tabTextElements.forEach((element) => {
+        element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--tab-text-light');
+      });
+    }
+  };
+
+  onMounted(() => {
+    applyTheme();
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  });
 </script>
+
+<style scoped lang="scss">
+  .logout-item {
+    margin-top: 140%;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0; /* Add a top border to separate from other items */
+    transition: background-color 0.3s;
+  }
+
+  .logout-item:active {
+    background-color: #e0e0e0; /* Change background color on press */
+  }
+
+  .black-icon {
+    color: #405729 !important;
+    transition: transform 0.2s ease-in-out; /* Add smooth transition for transform */
+  }
+
+  .black-icon:active {
+    transform: scale(0.9); /* Add press effect by scaling down */
+  }
+
+  .tabText {
+    color: var(--tab-text-light) !important;
+  }
+
+  ion-icon {
+    font-size: 22px; /* You can adjust this value as needed */
+  }
+
+  /* Ripple effect styles */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.3);
+    transform: scale(0);
+    animation: ripple-animation 0.6s linear;
+    pointer-events: none;
+  }
+
+  @keyframes ripple-animation {
+    to {
+      transform: scale(4);
+      opacity: 0;
+    }
+  }
+</style>
