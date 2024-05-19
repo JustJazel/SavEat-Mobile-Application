@@ -34,11 +34,11 @@
 
 <script setup lang="ts">
   import { Ref, capitalize, reactive, ref, computed } from 'vue';
-  import { IonItem, IonItemSliding, IonCheckbox, IonIcon, IonLabel, IonItemOption, IonItemOptions } from '@ionic/vue';
-  import { fastFoodOutline } from 'ionicons/icons';
+  import { IonItem, IonItemSliding, IonCheckbox, IonIcon, IonLabel, IonItemOption, IonItemOptions, toastController } from '@ionic/vue';
+  import { fastFoodOutline, arrowForwardOutline } from 'ionicons/icons';
   import { format } from 'date-fns';
   import { IFoodEntry, FoodEntryItemEmitType } from '../models';
-  import { arrowForwardOutline } from 'ionicons/icons';
+  import { deleteFoodEntry } from '../supabase';
 
   const props = defineProps<{
     entry: IFoodEntry;
@@ -63,7 +63,7 @@
         emit('onEdit', props.entry);
         break;
       case 'delete':
-        emit('onDelete', props.entry);
+        handleDelete();
         break;
       default:
         break;
@@ -74,6 +74,20 @@
     const currentDate = new Date();
     const expiryDate = new Date(entry.expiryDate);
     return expiryDate <= currentDate;
+  }
+
+  async function handleDelete() {
+    const success = await deleteFoodEntry(props.entry);
+    if (success) {
+      emit('onDelete', props.entry);
+      // Show a toast notification on successful deletion
+      const toast = await toastController.create({
+        message: 'Deletion successful',
+        duration: 2000,
+        position: 'top',
+      });
+      await toast.present();
+    }
   }
 </script>
 

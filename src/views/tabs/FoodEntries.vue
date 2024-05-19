@@ -265,6 +265,7 @@
     unit_measurement: '',
     food_usage: 0,
     usage_notes: '',
+    id: '',
   };
 
   const form = reactive({ ...initialForm });
@@ -279,7 +280,6 @@
 
   onIonViewDidEnter(() => {
     initFoodEntries();
-    openExpiringEntriesModal();
   });
 
   async function onAddFoodEntry() {

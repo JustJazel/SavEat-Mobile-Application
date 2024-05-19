@@ -4,7 +4,7 @@
       <ion-buttons slot="start">
         <ion-button color="black" @click="cancel">Cancel</ion-button>
       </ion-buttons>
-      <ion-title>Expiring / Low Stocks</ion-title>
+      <ion-title>Alerts</ion-title>
       <ion-buttons slot="end">
         <ion-button @click="confirm" :strong="true">Confirm</ion-button>
       </ion-buttons>

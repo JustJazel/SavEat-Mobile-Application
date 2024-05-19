@@ -8,6 +8,8 @@ import { useUserStore } from '../store';
 import FoodEntryModal from '../components/FoodEntryModal.vue';
 import ExpiringEntriesModal from '../components/ExpiringEntriesModal.vue';
 
+import { supabase } from '../supabase';
+
 const userStore = useUserStore();
 
 export const debounceArchiveToggle = useDebounceFn(async (entry: IFoodEntry) => {

@@ -40,7 +40,7 @@
           </ion-buttons>
           <ion-title class="tabText">{{ pageTitle }}</ion-title>
           <ion-buttons slot="end">
-            <ion-button>
+            <ion-button @click="handleOpenExpiringEntriesModal">
               <ion-icon class="tabText" :icon="notificationsOutline"></ion-icon>
             </ion-button>
           </ion-buttons>
@@ -89,6 +89,7 @@
   import { useIonRouter } from '@ionic/vue';
   import { useUserStore } from '../store';
   import { useRouter } from 'vue-router';
+  import { debounceArchiveToggle, onDeleteEntry, onEditEntry, openExpiringEntriesModal } from '../services';
 
   const pageTitle = ref('Menu');
   const ionRouter = useIonRouter();
@@ -143,6 +144,10 @@
         element.style.color = getComputedStyle(document.documentElement).getPropertyValue('--tab-text-light');
       });
     }
+  };
+
+  const handleOpenExpiringEntriesModal = () => {
+    openExpiringEntriesModal();
   };
 
   onMounted(() => {
