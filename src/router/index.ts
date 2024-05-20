@@ -12,14 +12,16 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/home',
   },
   {
-    path: '/login',
-    meta: { requiresAuth: false },
-    component: () => import('../views/Login.vue'),
-  },
-  {
     path: '/home',
     name: 'Home',
+    meta: { requiresAuth: false },
     component: HomePage,
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    meta: { requiresAuth: true },
+    component: () => import('../views/Login.vue'),
   },
   {
     path: '/inventory',
@@ -27,7 +29,17 @@ const routes: Array<RouteRecordRaw> = [
     component: InventoryPage,
   },
   {
-    path: '/item/', //add /:id to get the id of the item
+    path: '/FAQ',
+    name: 'FAQ',
+    component: () => import('../views/FAQ.vue'),
+  },
+  {
+    path: '/privacy-policy',
+    name: 'Privacy Policy',
+    component: () => import('../views/PrivacyPolicy.vue'),
+  },
+  {
+    path: '/item/:id', // Add /:id to get the id of the item
     name: 'Item',
     component: ItemPage,
   },
@@ -50,7 +62,6 @@ const routes: Array<RouteRecordRaw> = [
         name: 'food-entries',
         component: () => import('../views/tabs/FoodEntries.vue'),
       },
-      //added for report tab underneath
       {
         path: 'reports',
         name: 'reports',
