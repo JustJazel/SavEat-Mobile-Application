@@ -158,8 +158,14 @@
 </script>
 
 <style scoped lang="scss">
+  @media screen and (min-width: 400px) {
+  }
+
+  @media screen and (min-height: 1600px) {
+  }
+
   .logout-item {
-    margin-top: 140%;
+    margin-top: 500%;
     padding-top: 10px;
     border-top: 1px solid #e0e0e0; /* Add a top border to separate from other items */
     transition: background-color 0.3s;

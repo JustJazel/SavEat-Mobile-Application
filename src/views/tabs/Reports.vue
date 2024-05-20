@@ -101,7 +101,7 @@
               <ion-grid fixed>
                 <ion-row>
                   <ion-col size="2.2">Name</ion-col>
-                  <ion-col size="2.2">Quantity</ion-col>
+                  <ion-col size="2.5">Quantity</ion-col>
                   <ion-col size="2.2">Amount Restock</ion-col>
                   <ion-col size="2.2">Total Cost</ion-col>
                   <ion-col size="2.2">Notes</ion-col>
