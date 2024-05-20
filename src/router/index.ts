@@ -19,7 +19,8 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/login',
-    meta: { requiresAuth: false },
+    name: 'Login',
+    meta: { requiresAuth: true },
     component: () => import('../views/Login.vue'),
   },
   {
@@ -38,7 +39,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/PrivacyPolicy.vue'),
   },
   {
-    path: '/item/', //add /:id to get the id of the item
+    path: '/item/:id', // Add /:id to get the id of the item
     name: 'Item',
     component: ItemPage,
   },
@@ -47,7 +48,7 @@ const routes: Array<RouteRecordRaw> = [
     meta: { requiresAuth: false },
     component: () => import('../views/Register.vue'),
   },
-  /*{
+  {
     path: '/tabs',
     component: () => import('../views/TabsPage.vue'),
     meta: { requiresAuth: true },
@@ -75,7 +76,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('../views/Tab3Page.vue'),
       },
     ],
-  },*/
+  },
   {
     path: '/edit-profile',
     meta: { requiresAuth: true },
