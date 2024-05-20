@@ -263,8 +263,6 @@
     cost: 0,
     food_description: '',
     unit_measurement: '',
-    food_usage: 0,
-    usage_notes: '',
     id: '',
   };
 
@@ -303,8 +301,6 @@
         cost: form.cost,
         food_description: form.food_description,
         unit_measurement: form.unit_measurement,
-        food_usage: 0,
-        usage_notes: '',
       };
 
       await userStore.addFoodEntry(foodEntry);

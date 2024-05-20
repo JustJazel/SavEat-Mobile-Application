@@ -13,8 +13,8 @@ export interface FoodEntryModel {
   store_date: string;
   type: FoodEntryType;
   is_archived: boolean;
-  food_usage: number;
-  usage_notes: string;
+  //food_usage: number;
+  //usage_notes: string;
 }
 
 export interface UsageReportModel {

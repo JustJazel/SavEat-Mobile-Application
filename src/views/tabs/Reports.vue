@@ -122,12 +122,6 @@
               </ion-grid>
             </div>
 
-            <!-- Total Cost -->
-            <ion-item>
-              <ion-label position="stacked">Total Cost:</ion-label>
-              <ion-input type="number" v-model="form.quantity"></ion-input>
-            </ion-item>
-
             <ion-item>
               <ion-button type="submit" expand="block" :disabled="!isRestockSubmitEnabled">Submit Report</ion-button>
             </ion-item>
@@ -322,11 +316,12 @@
     IonSearchbar,
     IonIcon,
   } from '@ionic/vue';
-  import { reactive, ref, computed } from 'vue';
+  import { reactive, ref, computed, watch } from 'vue';
   import shortid from 'shortid';
   import { initFoodEntries, updateFoodEntry, insertUsageReport, insertRestockReport, supabase } from '../../supabase';
   import { useUserStore } from '../../store';
   import { Tabs, IUsageReportForm, IRestockReportForm } from '../../models';
+  import { FoodEntryType } from '../../models/food-entry-type.enum';
   import { notifications } from 'ionicons/icons';
 
   interface UsageReport {
@@ -356,17 +351,50 @@
     restock_notes: string;
   }
 
+  interface IFoodEntry {
+    id: string;
+    name: string;
+    createAt?: string;
+    authUserId?: string;
+    type: FoodEntryType;
+    storeDate: string;
+    expiryDate: string;
+    isArchived: boolean;
+    quantity: number;
+    cost: number;
+    food_description: string;
+    unit_measurement: string;
+  }
+
+  interface IFoodEntryExtended extends IFoodEntry {
+    food_usage?: number;
+    usage_notes?: string;
+    restock_amount?: number;
+    total_cost?: number;
+    restock_notes?: string;
+  }
+
+  interface User {
+    id: string;
+    email: string;
+  }
+
   const userStore = useUserStore();
 
-  // Initialize food entries with restock_amount and total_cost
-  userStore.foodEntries.forEach((entry) => {
-    entry.restock_amount = entry.restock_amount ?? 0;
-    entry.total_cost = entry.total_cost ?? 0;
-    entry.restock_notes = entry.restock_notes ?? '';
-  });
+  // Initialize food entries with restock_amount, total_cost, food_usage, and usage_notes because imports are confusing
+  const foodEntries = reactive(
+    userStore.foodEntries.map((entry) => ({
+      ...entry,
+      restock_amount: (entry as IFoodEntryExtended).restock_amount ?? 0,
+      total_cost: (entry as IFoodEntryExtended).total_cost ?? 0,
+      restock_notes: (entry as IFoodEntryExtended).restock_notes ?? '',
+      food_usage: (entry as IFoodEntryExtended).food_usage ?? 0,
+      usage_notes: (entry as IFoodEntryExtended).usage_notes ?? '',
+    })) as IFoodEntryExtended[],
+  );
 
   const initialForm: IUsageReportForm = {
-    report_date: new Date().toISOString(), // Ensure report_date is set initially
+    report_date: new Date().toISOString(),
     food_id: '',
     food_usage: 0,
     usage_notes: '',
@@ -396,7 +424,7 @@
   const restockReportDetails = ref<RestockDetail[]>([]);
   const isModalOpen = ref(false);
   const isRestockModalOpen = ref(false);
-  const currentUser = ref(null);
+  const currentUser = ref<User | null>(null); // Ensure the type can be User or null
 
   onIonViewDidEnter(async () => {
     await initFoodEntries();
@@ -407,16 +435,16 @@
 
   const filteredFoodEntries = computed(() => {
     if (!searchQuery.value) {
-      return userStore.foodEntries;
+      return foodEntries;
     }
-    return userStore.foodEntries.filter((entry) => entry.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    return foodEntries.filter((entry) => entry.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
   });
 
   const filteredRestockFoodEntries = computed(() => {
     if (!restockSearchQuery.value) {
-      return userStore.foodEntries;
+      return foodEntries;
     }
-    return userStore.foodEntries.filter((entry) => entry.name.toLowerCase().includes(restockSearchQuery.value.toLowerCase()));
+    return foodEntries.filter((entry) => entry.name.toLowerCase().includes(restockSearchQuery.value.toLowerCase()));
   });
 
   const onDateChange = (event: any) => {
@@ -424,23 +452,26 @@
   };
 
   const isSubmitEnabled = computed(() => {
-    return userStore.foodEntries.some((entry) => entry.food_usage > 0);
+    return foodEntries.some((entry) => entry.food_usage! > 0);
   });
 
   const isRestockSubmitEnabled = computed(() => {
-    return userStore.foodEntries.some((entry) => entry.restock_amount);
+    return foodEntries.some((entry) => entry.restock_amount! > 0);
   });
 
-  const getCurrentUser = async () => {
+  const getCurrentUser = async (): Promise<User | null> => {
     const { data: user, error } = await supabase.auth.getUser();
-    if (error) {
-      throw new Error('User not authenticated');
+    if (error || !user) {
+      console.error('Error fetching user:', error);
+      return null;
     }
-    return user.user;
+    return user.user as User;
   };
 
   const fetchUniqueUsageReports = async () => {
     const user = await getCurrentUser();
+    if (!user) return;
+
     const { data, error } = await supabase
       .from('usage_report')
       .select('usage_id, report_date, auth_user_id')
@@ -465,6 +496,8 @@
 
   const fetchUniqueRestockReports = async () => {
     const user = await getCurrentUser();
+    if (!user) return;
+
     const { data, error } = await supabase
       .from('restock_report')
       .select('restock_id, restock_date, auth_user_id')
@@ -505,7 +538,7 @@
 
     const details = data.map((detail: any) => ({
       id: detail.id,
-      name: userStore.foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
+      name: foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
       food_usage: detail.food_usage,
       usage_notes: detail.usage_notes,
     }));
@@ -527,7 +560,7 @@
 
     const details = data.map((detail: any) => ({
       id: detail.id,
-      name: userStore.foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
+      name: foodEntries.find((entry) => entry.id === detail.food_id)?.name || 'Unknown',
       restock_amount: detail.restock_amount,
       total_cost: detail.total_cost,
       restock_notes: detail.restock_notes,
@@ -548,24 +581,29 @@
   const onAddUsageReport = async () => {
     try {
       const user = await getCurrentUser();
+      if (!user) {
+        alert('User not authenticated');
+        return;
+      }
+
       const auth_user_id = user.id;
       const usageId = shortid.generate();
 
-      // Use the date from form.report_date or current date if not set
+      // Use the date from form.report_date
       const report_date = form.report_date ? new Date(form.report_date).toISOString() : new Date().toISOString();
 
-      const usageReports = userStore.foodEntries
-        .filter((entry) => entry.food_usage > 0 && entry.food_usage !== null)
+      const usageReports = foodEntries
+        .filter((entry) => entry.food_usage! > 0 && entry.food_usage !== null)
         .map((entry) => {
-          if (entry.food_usage > entry.quantity) {
+          if (entry.food_usage! > entry.quantity) {
             throw new Error(`Usage amount for ${entry.name} exceeds available quantity.`);
           }
           return {
             usage_id: usageId,
             report_date,
             food_id: entry.id,
-            food_usage: entry.food_usage,
-            usage_notes: entry.usage_notes,
+            food_usage: entry.food_usage!,
+            usage_notes: entry.usage_notes!,
             auth_user_id,
           };
         });
@@ -574,7 +612,7 @@
         usageReports.map(async (report) => {
           await insertUsageReport(report);
 
-          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          const foodEntry = foodEntries.find((entry) => entry.id === report.food_id);
           if (foodEntry) {
             foodEntry.quantity -= report.food_usage;
             await updateFoodEntry(foodEntry);
@@ -582,8 +620,8 @@
         }),
       );
 
-      // Reset usage and notes, but not the date
-      userStore.foodEntries.forEach((entry) => {
+      // Reset usage and notes, but not the date because the date get set to null and now you can't add a new report
+      foodEntries.forEach((entry) => {
         entry.food_usage = 0;
         entry.usage_notes = '';
       });
@@ -599,22 +637,27 @@
   const onAddRestockReport = async () => {
     try {
       const user = await getCurrentUser();
+      if (!user) {
+        alert('User not authenticated');
+        return;
+      }
+
       const auth_user_id = user.id;
       const restockId = shortid.generate();
 
-      // Use the date from restockForm.restock_date or current date if not set
+      // Use the date from restockForm.restock_date to set the date because it refuses to set on pageload
       const restock_date = restockForm.restock_date ? new Date(restockForm.restock_date).toISOString() : new Date().toISOString();
 
-      const restockReports = userStore.foodEntries
-        .filter((entry) => (entry.restock_amount ?? 0) > 0 && (entry.total_cost ?? 0) > 0)
+      const restockReports = foodEntries
+        .filter((entry) => entry.restock_amount! > 0 && entry.total_cost! > 0)
         .map((entry) => {
           return {
             restock_id: restockId,
             restock_date,
             food_id: entry.id,
-            restock_amount: Number(entry.restock_amount) ?? 0,
-            total_cost: Number(entry.total_cost) ?? 0,
-            restock_notes: entry.restock_notes ?? '',
+            restock_amount: Number(entry.restock_amount),
+            total_cost: Number(entry.total_cost),
+            restock_notes: entry.restock_notes!,
             auth_user_id,
           };
         });
@@ -623,16 +666,16 @@
         restockReports.map(async (report) => {
           await insertRestockReport(report);
 
-          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          const foodEntry = foodEntries.find((entry) => entry.id === report.food_id);
           if (foodEntry) {
-            foodEntry.quantity += Number(report.restock_amount); // Ensure it's a number
+            foodEntry.quantity += Number(report.restock_amount);
             await updateFoodEntry(foodEntry);
           }
         }),
       );
 
-      // Reset restock and notes, but not the date
-      userStore.foodEntries.forEach((entry) => {
+      // Reset restock and notes because it we reset the date, it will go null and the now you can no longer make a new report
+      foodEntries.forEach((entry) => {
         entry.restock_amount = 0;
         entry.total_cost = 0;
         entry.restock_notes = '';
@@ -645,4 +688,19 @@
       alert(`Failed to submit restock report`);
     }
   };
+
+  // Watch for changes in foodEntries to update the submit button state
+  watch(
+    () => foodEntries.map((entry) => entry.food_usage),
+    () => {
+      /* This forces the computed property to re-evaluate */
+    },
+  );
+
+  watch(
+    () => foodEntries.map((entry) => entry.restock_amount),
+    () => {
+      /* This forces the computed property to re-evaluate */
+    },
+  );
 </script>
