@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "ccs.v6.project"
+    namespace "ccs.v8.project"
     compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "ccs.v8.project"
