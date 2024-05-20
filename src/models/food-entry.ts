@@ -14,11 +14,11 @@ export interface IFoodEntry {
   food_description: string;
   unit_measurement: string;
 
-  food_usage: number;
-  usage_notes: string;
-  restock_amount?: number;
-  total_cost?: number;
-  restock_notes?: string;
+  //food_usage: number;
+  //usage_notes: string;
+  //restock_amount?: number;
+  //total_cost?: number;
+  //restock_notes?: string;
 }
 
 export interface IUsageReportForm {

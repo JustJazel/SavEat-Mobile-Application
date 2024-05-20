@@ -11,6 +11,6 @@ export interface IFoodEntryForm {
   food_description: string;
   unit_measurement: string;
   id: string;
-  food_usage: number;
-  usage_notes: string;
+  // food_usage: number;
+  //usage_notes: string;
 }

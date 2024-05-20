@@ -327,6 +327,7 @@
   import { initFoodEntries, updateFoodEntry, insertUsageReport, insertRestockReport, supabase } from '../../supabase';
   import { useUserStore } from '../../store';
   import { Tabs, IUsageReportForm, IRestockReportForm } from '../../models';
+  import { FoodEntryType } from '../../models/food-entry-type.enum';
   import { notifications } from 'ionicons/icons';
 
   interface UsageReport {
@@ -356,14 +357,40 @@
     restock_notes: string;
   }
 
+  interface IFoodEntry {
+    id: string;
+    name: string;
+    createAt?: string;
+    authUserId?: string;
+    type: FoodEntryType;
+    storeDate: string;
+    expiryDate: string;
+    isArchived: boolean;
+    quantity: number;
+    cost: number;
+    food_description: string;
+    unit_measurement: string;
+  }
+
+  interface IFoodEntryExtended extends IFoodEntry {
+    food_usage?: number;
+    usage_notes?: string;
+    restock_amount?: number;
+    total_cost?: number;
+    restock_notes?: string;
+  }
+
   const userStore = useUserStore();
 
-  // Initialize food entries with restock_amount and total_cost
-  userStore.foodEntries.forEach((entry) => {
-    entry.restock_amount = entry.restock_amount ?? 0;
-    entry.total_cost = entry.total_cost ?? 0;
-    entry.restock_notes = entry.restock_notes ?? '';
-  });
+  // Initialize food entries with restock_amount, total_cost, food_usage, and usage_notes
+  userStore.foodEntries = userStore.foodEntries.map((entry: IFoodEntryExtended) => ({
+    ...entry,
+    restock_amount: entry.restock_amount ?? 0,
+    total_cost: entry.total_cost ?? 0,
+    restock_notes: entry.restock_notes ?? '',
+    food_usage: entry.food_usage ?? 0,
+    usage_notes: entry.usage_notes ?? '',
+  }));
 
   const initialForm: IUsageReportForm = {
     report_date: new Date().toISOString(), // Ensure report_date is set initially
@@ -424,11 +451,11 @@
   };
 
   const isSubmitEnabled = computed(() => {
-    return userStore.foodEntries.some((entry) => entry.food_usage > 0);
+    return userStore.foodEntries.some((entry) => (entry as IFoodEntryExtended).food_usage! > 0);
   });
 
   const isRestockSubmitEnabled = computed(() => {
-    return userStore.foodEntries.some((entry) => entry.restock_amount);
+    return userStore.foodEntries.some((entry) => (entry as IFoodEntryExtended).restock_amount! > 0);
   });
 
   const getCurrentUser = async () => {
@@ -555,17 +582,17 @@
       const report_date = form.report_date ? new Date(form.report_date).toISOString() : new Date().toISOString();
 
       const usageReports = userStore.foodEntries
-        .filter((entry) => entry.food_usage > 0 && entry.food_usage !== null)
+        .filter((entry) => (entry as IFoodEntryExtended).food_usage! > 0 && (entry as IFoodEntryExtended).food_usage !== null)
         .map((entry) => {
-          if (entry.food_usage > entry.quantity) {
+          if ((entry as IFoodEntryExtended).food_usage! > entry.quantity) {
             throw new Error(`Usage amount for ${entry.name} exceeds available quantity.`);
           }
           return {
             usage_id: usageId,
             report_date,
             food_id: entry.id,
-            food_usage: entry.food_usage,
-            usage_notes: entry.usage_notes,
+            food_usage: (entry as IFoodEntryExtended).food_usage!,
+            usage_notes: (entry as IFoodEntryExtended).usage_notes!,
             auth_user_id,
           };
         });
@@ -574,7 +601,7 @@
         usageReports.map(async (report) => {
           await insertUsageReport(report);
 
-          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id) as IFoodEntryExtended;
           if (foodEntry) {
             foodEntry.quantity -= report.food_usage;
             await updateFoodEntry(foodEntry);
@@ -584,8 +611,8 @@
 
       // Reset usage and notes, but not the date
       userStore.foodEntries.forEach((entry) => {
-        entry.food_usage = 0;
-        entry.usage_notes = '';
+        (entry as IFoodEntryExtended).food_usage = 0;
+        (entry as IFoodEntryExtended).usage_notes = '';
       });
 
       alert('Usage report submitted successfully.');
@@ -606,15 +633,15 @@
       const restock_date = restockForm.restock_date ? new Date(restockForm.restock_date).toISOString() : new Date().toISOString();
 
       const restockReports = userStore.foodEntries
-        .filter((entry) => (entry.restock_amount ?? 0) > 0 && (entry.total_cost ?? 0) > 0)
+        .filter((entry) => (entry as IFoodEntryExtended).restock_amount! > 0 && (entry as IFoodEntryExtended).total_cost! > 0)
         .map((entry) => {
           return {
             restock_id: restockId,
             restock_date,
             food_id: entry.id,
-            restock_amount: Number(entry.restock_amount) ?? 0,
-            total_cost: Number(entry.total_cost) ?? 0,
-            restock_notes: entry.restock_notes ?? '',
+            restock_amount: Number((entry as IFoodEntryExtended).restock_amount),
+            total_cost: Number((entry as IFoodEntryExtended).total_cost),
+            restock_notes: (entry as IFoodEntryExtended).restock_notes!,
             auth_user_id,
           };
         });
@@ -623,7 +650,7 @@
         restockReports.map(async (report) => {
           await insertRestockReport(report);
 
-          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id);
+          const foodEntry = userStore.foodEntries.find((entry) => entry.id === report.food_id) as IFoodEntryExtended;
           if (foodEntry) {
             foodEntry.quantity += Number(report.restock_amount); // Ensure it's a number
             await updateFoodEntry(foodEntry);
@@ -633,9 +660,9 @@
 
       // Reset restock and notes, but not the date
       userStore.foodEntries.forEach((entry) => {
-        entry.restock_amount = 0;
-        entry.total_cost = 0;
-        entry.restock_notes = '';
+        (entry as IFoodEntryExtended).restock_amount = 0;
+        (entry as IFoodEntryExtended).total_cost = 0;
+        (entry as IFoodEntryExtended).restock_notes = '';
       });
 
       alert('Restock report submitted successfully.');
