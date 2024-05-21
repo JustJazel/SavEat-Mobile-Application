@@ -7,6 +7,11 @@
     </ion-header>
     <ion-content>
       <ion-list :inset="true">
+        <div class="login__logo">
+          <router-link to="/home" class="logo-link">
+            <img src="@/assets/images/LogoSav.png" alt="logo" />
+          </router-link>
+        </div>
         <form @submit.prevent="createAccount">
           <ion-item>
             <ion-input label-placement="stacked" label="First Name" v-model="user.firstName" name="first-name" type="text"></ion-input>
@@ -35,6 +40,23 @@
 </template>
 
 <style lang="scss" scoped>
+  .login__logo {
+    display: flex;
+    justify-content: center;
+    margin: 2rem auto;
+    max-width: 600px; /* Increase max-width for larger container */
+
+    .logo-link {
+      display: block;
+    }
+
+    img {
+      max-width: 100%; /* Adjust max-width to be 100% of the container */
+      object-fit: contain;
+      width: 100%;
+    }
+  }
+
   .form__submit {
     display: flex;
     flex-direction: column;

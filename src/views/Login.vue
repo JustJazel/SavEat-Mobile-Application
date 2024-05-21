@@ -8,7 +8,9 @@
     <ion-content>
       <ion-list :inset="true">
         <div class="login__logo">
-          <img src="@assets/images/LogoSav.png" alt="logo" />
+          <router-link to="/home" class="logo-link">
+            <img src="@/assets/images/LogoSav.png" alt="logo" />
+          </router-link>
         </div>
         <form @submit.prevent="login" class="login__form">
           <ion-item>
@@ -41,10 +43,14 @@
       display: flex;
       justify-content: center;
       margin: 2rem auto;
-      max-width: 400px;
+      max-width: 600px; /* Increase max-width for larger container */
+
+      .logo-link {
+        display: block;
+      }
 
       img {
-        max-width: 30%;
+        max-width: 100%; /* Adjust max-width to be 100% of the container */
         object-fit: contain;
         width: 100%;
       }
