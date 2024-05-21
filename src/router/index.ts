@@ -20,7 +20,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/login',
     name: 'Login',
-    meta: { requiresAuth: true },
+    meta: { requiresAuth: false },
     component: () => import('../views/Login.vue'),
   },
   {
@@ -45,6 +45,7 @@ const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/register',
+    name: 'Register',
     meta: { requiresAuth: false },
     component: () => import('../views/Register.vue'),
   },

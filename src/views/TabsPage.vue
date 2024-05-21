@@ -111,7 +111,7 @@
     console.log('userStore Food Entries: ', userStore.getFoodEntries);
 
     await menuController.close();
-    ionRouter.navigate({ path: '/login', replace: true });
+    ionRouter.navigate({ path: '/home', replace: true });
   }
 
   async function goToEditProfile() {

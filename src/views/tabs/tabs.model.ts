@@ -13,7 +13,7 @@ export const TAB_ROUTES = {
   },
   REPORTS: {
     path: '/tabs/reports',
-    name: 'Reports', // Name of header
+    name: 'Reports',
     icon: newspaperOutline,
   },
   SUGGESTIONS_V2: {
