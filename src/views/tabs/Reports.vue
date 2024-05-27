@@ -315,6 +315,7 @@
     IonSegmentButton,
     IonSearchbar,
     IonIcon,
+    toastController,
   } from '@ionic/vue';
   import { reactive, ref, computed, watch } from 'vue';
   import shortid from 'shortid';
@@ -582,7 +583,13 @@
     try {
       const user = await getCurrentUser();
       if (!user) {
-        alert('User not authenticated');
+        const toast = await toastController.create({
+          message: 'User not authenticated',
+          duration: 2000,
+          position: 'top',
+          color: 'danger',
+        });
+        await toast.present();
         return;
       }
 
@@ -626,11 +633,23 @@
         entry.usage_notes = '';
       });
 
-      alert('Usage report submitted successfully.');
+      const toast = await toastController.create({
+        message: 'Usage report submitted successfully.',
+        duration: 2000,
+        position: 'top',
+        color: 'success',
+      });
+      await toast.present();
       fetchUniqueUsageReports();
     } catch (error) {
       console.error('Error adding usage report:', error);
-      alert(`Failed to submit usage report`);
+      const toast = await toastController.create({
+        message: `Failed to submit usage report`,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
+      });
+      await toast.present();
     }
   };
 
@@ -638,7 +657,13 @@
     try {
       const user = await getCurrentUser();
       if (!user) {
-        alert('User not authenticated');
+        const toast = await toastController.create({
+          message: 'User not authenticated',
+          duration: 2000,
+          position: 'top',
+          color: 'danger',
+        });
+        await toast.present();
         return;
       }
 
@@ -649,8 +674,11 @@
       const restock_date = restockForm.restock_date ? new Date(restockForm.restock_date).toISOString() : new Date().toISOString();
 
       const restockReports = foodEntries
-        .filter((entry) => entry.restock_amount! > 0 && entry.total_cost! > 0)
+        .filter((entry) => entry.restock_amount! > 0)
         .map((entry) => {
+          if (entry.total_cost! <= 0) {
+            throw new Error(`Total cost for ${entry.name} cannot be zero or negative.`);
+          }
           return {
             restock_id: restockId,
             restock_date,
@@ -681,11 +709,23 @@
         entry.restock_notes = '';
       });
 
-      alert('Restock report submitted successfully.');
+      const toast = await toastController.create({
+        message: 'Restock report submitted successfully.',
+        duration: 2000,
+        position: 'top',
+        color: 'success',
+      });
+      await toast.present();
       fetchUniqueRestockReports();
     } catch (error) {
       console.error('Error adding restock report:', error);
-      alert(`Failed to submit restock report`);
+      const toast = await toastController.create({
+        message: `Failed to submit restock report`,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
+      });
+      await toast.present();
     }
   };
 

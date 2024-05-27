@@ -86,12 +86,17 @@
         duration: 2000,
         position: 'top',
       });
+
+      // Apply styles directly to the toast element
+      toast.style.setProperty('--background', 'green');
+      toast.style.setProperty('--color', 'white');
+
       await toast.present();
     }
   }
 </script>
 
-<style lang="scss">
+<style scoped>
   .food-entry-item {
     ion-item {
       position: relative;

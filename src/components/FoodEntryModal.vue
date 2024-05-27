@@ -70,6 +70,14 @@
         <ion-checkbox v-model="form.isArchived" label-placement="start"></ion-checkbox>
       </ion-item>
     </ion-list>
+    <ion-toast
+      :is-open="showToast"
+      :message="toastMessage"
+      duration="2000"
+      position="top"
+      style="--background: green; --color: white"
+      @did-dismiss="showToast = false"
+    ></ion-toast>
   </ion-content>
 </template>
 
@@ -92,7 +100,9 @@
     IonCheckbox,
     IonSelect,
     IonSelectOption,
+    IonToast,
   } from '@ionic/vue';
+  import { ref } from 'vue';
   import { FoodEntryType } from '../models';
   import FoodTypePicker from './FoodTypePicker.vue';
   import { IFoodEntryForm } from '../models';
@@ -111,6 +121,9 @@
     props.form.type = type;
   }
 
+  const showToast = ref(false);
+  const toastMessage = ref('');
+
   const cancel = () => {
     modalController.dismiss(null, 'cancel');
     emit('cancel');
@@ -120,6 +133,10 @@
     try {
       // Call the update service
       await updateFoodEntry(props.form);
+
+      // Show success toast
+      toastMessage.value = 'Food entry updated successfully!';
+      showToast.value = true;
 
       // Close the modal and return the updated form data
       modalController.dismiss(props.form, 'confirm');
