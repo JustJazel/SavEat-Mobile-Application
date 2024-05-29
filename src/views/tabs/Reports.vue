@@ -213,7 +213,7 @@
   }
 
   .table-container {
-    max-height: 400px; /* Adjust the height as needed */
+    max-height: 400px;
     overflow-y: auto;
   }
 
@@ -245,51 +245,50 @@
 
   // Placeholder text size
   ion-input::part(native)::-webkit-input-placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    font-size: 10px;
 
-  ion-input::part(native)::-moz-placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    ion-input::part(native)::-moz-placeholder {
+      font-size: 10px;
+    }
 
-  ion-input::part(native):-ms-input-placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    ion-input::part(native):-ms-input-placeholder {
+      font-size: 10px;
+    }
 
-  ion-input::part(native)::-ms-input-placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    ion-input::part(native)::-ms-input-placeholder {
+      font-size: 10px;
+    }
 
-  ion-input::part(native)::placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    ion-input::part(native)::placeholder {
+      font-size: 10px;
+    }
 
-  // Segment button styles
-  ion-segment-button.restock-report-button {
-    color: #97a48d !important;
-    background-color: #d3d8ca;
-  }
+    ion-segment-button.restock-report-button {
+      color: #97a48d !important;
+      background-color: #d3d8ca;
+    }
 
-  //#d3d8ca;
-  //#aebf8f;
-  ion-segment-button.usage-report-button {
-    color: #97a48d !important;
-    background-color: #d3d8ca;
-  }
+    //#d3d8ca;
+    //#aebf8f;
+    ion-segment-button.usage-report-button {
+      color: #97a48d !important;
+      background-color: #d3d8ca;
+    }
 
-  ion-segment-button.restock-report-button.segment-button-checked {
-    color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #d3d8ca !important; /* Change background color when selected */
-  }
+    ion-segment-button.restock-report-button.segment-button-checked {
+      color: #333531 !important;
+      background-color: #d3d8ca !important;
+    }
 
-  ion-segment-button.usage-report-button.segment-button-checked {
-    color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #d3d8ca !important; /* Change background color when selected */
-  }
+    ion-segment-button.usage-report-button.segment-button-checked {
+      color: #333531 !important;
+      background-color: #d3d8ca !important;
+    }
 
-  .segment-button-checked {
-    background-color: #8f9486 !important;
-    color: #333531 !important; /* Optional: Change the text color when selected */
+    .segment-button-checked {
+      background-color: #8f9486 !important;
+      color: #333531 !important;
+    }
   }
 </style>
 
@@ -315,6 +314,7 @@
     IonSegmentButton,
     IonSearchbar,
     IonIcon,
+    toastController,
   } from '@ionic/vue';
   import { reactive, ref, computed, watch } from 'vue';
   import shortid from 'shortid';
@@ -582,7 +582,13 @@
     try {
       const user = await getCurrentUser();
       if (!user) {
-        alert('User not authenticated');
+        const toast = await toastController.create({
+          message: 'User not authenticated',
+          duration: 2000,
+          position: 'top',
+          color: 'danger',
+        });
+        await toast.present();
         return;
       }
 
@@ -626,11 +632,23 @@
         entry.usage_notes = '';
       });
 
-      alert('Usage report submitted successfully.');
+      const toast = await toastController.create({
+        message: 'Usage report submitted successfully.',
+        duration: 2000,
+        position: 'top',
+        color: 'success',
+      });
+      await toast.present();
       fetchUniqueUsageReports();
     } catch (error) {
       console.error('Error adding usage report:', error);
-      alert(`Failed to submit usage report`);
+      const toast = await toastController.create({
+        message: `Failed to submit usage report`,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
+      });
+      await toast.present();
     }
   };
 
@@ -638,7 +656,13 @@
     try {
       const user = await getCurrentUser();
       if (!user) {
-        alert('User not authenticated');
+        const toast = await toastController.create({
+          message: 'User not authenticated',
+          duration: 2000,
+          position: 'top',
+          color: 'danger',
+        });
+        await toast.present();
         return;
       }
 
@@ -649,8 +673,11 @@
       const restock_date = restockForm.restock_date ? new Date(restockForm.restock_date).toISOString() : new Date().toISOString();
 
       const restockReports = foodEntries
-        .filter((entry) => entry.restock_amount! > 0 && entry.total_cost! > 0)
+        .filter((entry) => entry.restock_amount! > 0)
         .map((entry) => {
+          if (entry.total_cost! <= 0) {
+            throw new Error(`Total cost for ${entry.name} cannot be zero or negative.`);
+          }
           return {
             restock_id: restockId,
             restock_date,
@@ -681,11 +708,23 @@
         entry.restock_notes = '';
       });
 
-      alert('Restock report submitted successfully.');
+      const toast = await toastController.create({
+        message: 'Restock report submitted successfully.',
+        duration: 2000,
+        position: 'top',
+        color: 'success',
+      });
+      await toast.present();
       fetchUniqueRestockReports();
     } catch (error) {
       console.error('Error adding restock report:', error);
-      alert(`Failed to submit restock report`);
+      const toast = await toastController.create({
+        message: `Failed to submit restock report`,
+        duration: 2000,
+        position: 'top',
+        color: 'danger',
+      });
+      await toast.present();
     }
   };
 
