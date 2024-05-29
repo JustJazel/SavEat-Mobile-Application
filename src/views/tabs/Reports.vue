@@ -213,7 +213,7 @@
   }
 
   .table-container {
-    max-height: 400px; /* Adjust the height as needed */
+    max-height: 400px;
     overflow-y: auto;
   }
 
@@ -245,26 +245,25 @@
 
   // Placeholder text size
   ion-input::part(native)::-webkit-input-placeholder {
-    font-size: 10px; /* Smaller size */
-  }
+    font-size: 10px;
 
   ion-input::part(native)::-moz-placeholder {
-    font-size: 10px; /* Smaller size */
+    font-size: 10px;
   }
 
   ion-input::part(native):-ms-input-placeholder {
-    font-size: 10px; /* Smaller size */
+    font-size: 10px;
   }
 
   ion-input::part(native)::-ms-input-placeholder {
-    font-size: 10px; /* Smaller size */
+    font-size: 10px;
   }
 
   ion-input::part(native)::placeholder {
-    font-size: 10px; /* Smaller size */
+    font-size: 10px;
   }
 
-  // Segment button styles
+
   ion-segment-button.restock-report-button {
     color: #97a48d !important;
     background-color: #d3d8ca;
@@ -278,18 +277,18 @@
   }
 
   ion-segment-button.restock-report-button.segment-button-checked {
-    color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #d3d8ca !important; /* Change background color when selected */
+    color: #333531 !important;
+    background-color: #d3d8ca !important;
   }
 
   ion-segment-button.usage-report-button.segment-button-checked {
-    color: #333531 !important; /* Optional: Change the text color when selected */
-    background-color: #d3d8ca !important; /* Change background color when selected */
+    color: #333531 !important;
+    background-color: #d3d8ca !important;
   }
 
   .segment-button-checked {
     background-color: #8f9486 !important;
-    color: #333531 !important; /* Optional: Change the text color when selected */
+    color: #333531 !important;
   }
 </style>
 
